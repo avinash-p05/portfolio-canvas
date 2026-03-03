@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Avinash Pauskar | Terminal Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset & Base ────────────────────────────────────── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:        #0a0e14;
+      --surface:   #111822;
+      --border:    #1e2a3a;
+      --text:      #c5cdd9;
+      --accent:    #39ff14;
+      --accent2:   #00e5ff;
+      --yellow:    #ffcc00;
+      --orange:    #ff9f43;
+      --pink:      #ff6b81;
+      --purple:    #c678dd;
+      --muted:     #5c6773;
+      --prompt:    #39ff14;
+      --font:      'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    }
+
+    html { font-size: 15px; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 1.5rem;
+      overflow-x: hidden;
+    }
+
+    /* ── Scanline overlay ────────────────────────────────── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.08) 0px,
+        rgba(0, 0, 0, 0.08) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── Terminal Window ─────────────────────────────────── */
+    #terminal-window {
+      width: 100%;
+      max-width: 880px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow:
+        0 0 40px rgba(57, 255, 20, 0.06),
+        0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    /* ── Title Bar ───────────────────────────────────────── */
+    #title-bar {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      background: #0d1117;
+      border-bottom: 1px solid var(--border);
+      gap: 8px;
+      user-select: none;
+    }
+
+    .traffic-light {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .tl-red    { background: #ff5f56; }
+    .tl-yellow { background: #ffbd2e; }
+    .tl-green  { background: #27c93f; }
+
+    #title-bar span {
+      flex: 1;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+    }
+
+    /* ── Terminal Body ───────────────────────────────────── */
+    #terminal {
+      padding: 1.2rem 1.4rem;
+      height: 75vh;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+      line-height: 1.7;
+      font-size: 0.92rem;
+    }
+
+    #terminal::-webkit-scrollbar { width: 6px; }
+    #terminal::-webkit-scrollbar-track { background: transparent; }
+    #terminal::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
+
+    /* ── Output Sections ─────────────────────────────────── */
+    .line { white-space: pre-wrap; word-wrap: break-word; }
+    .line.blank { height: 0.5rem; }
+
+    .prompt-prefix {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .cmd-text { color: var(--accent2); }
+
+    .section-title {
+      color: var(--yellow);
+      font-weight: 700;
+      font-size: 1rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 4px;
+      margin-bottom: 6px;
+      display: inline-block;
+    }
+
+    .highlight  { color: var(--accent); }
+    .accent2    { color: var(--accent2); }
+    .yellow     { color: var(--yellow); }
+    .orange     { color: var(--orange); }
+    .pink       { color: var(--pink); }
+    .purple     { color: var(--purple); }
+    .muted      { color: var(--muted); }
+    .bold       { font-weight: 700; }
+
+    a {
+      color: var(--accent2);
+      text-decoration: none;
+      border-bottom: 1px dashed var(--accent2);
+      transition: color 0.2s;
+    }
+    a:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* ── Input Line ──────────────────────────────────────── */
+    #input-line {
+      display: flex;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    #input-line .prompt-prefix { flex-shrink: 0; }
+
+    #cmd-input {
+      flex: 1;
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--accent2);
+      font-family: var(--font);
+      font-size: 0.92rem;
+      caret-color: var(--accent);
+      margin-left: 4px;
+    }
+
+    /* ── Typing effect cursor ────────────────────────────── */
+    .typing-cursor {
+      display: inline-block;
+      width: 8px;
+      background: var(--accent);
+      animation: blink 0.8s step-end infinite;
+      margin-left: 2px;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0; }
+    }
+
+    /* ── ASCII Art ────────────────────────────────────────── */
+    .ascii-art {
+      color: var(--accent);
+      font-size: 0.72rem;
+      line-height: 1.25;
+      letter-spacing: 1px;
+    }
+
+    /* ── Welcome box ─────────────────────────────────────── */
+    .welcome-box {
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      border-radius: 6px;
+      margin: 8px 0;
+      background: rgba(57, 255, 20, 0.03);
+    }
+
+    /* ── Table-like layouts ───────────────────────────────── */
+    .info-row {
+      display: flex;
+      gap: 12px;
+      padding: 2px 0;
+    }
+    .info-label {
+      color: var(--yellow);
+      min-width: 160px;
+      flex-shrink: 0;
+    }
+
+    .skill-tag {
+      display: inline-block;
+      background: rgba(57, 255, 20, 0.08);
+      border: 1px solid rgba(57, 255, 20, 0.2);
+      border-radius: 4px;
+      padding: 2px 8px;
+      margin: 2px 3px;
+      font-size: 0.82rem;
+      color: var(--accent);
+    }
+
+    .skill-category {
+      color: var(--orange);
+      font-weight: 600;
+      margin-top: 6px;
+    }
+
+    .project-card {
+      border-left: 3px solid var(--accent2);
+      padding: 6px 0 6px 14px;
+      margin: 8px 0;
+    }
+
+    .exp-card {
+      border-left: 3px solid var(--purple);
+      padding: 6px 0 6px 14px;
+      margin: 8px 0;
+    }
+
+    .edu-card {
+      border-left: 3px solid var(--yellow);
+      padding: 6px 0 6px 14px;
+      margin: 8px 0;
+    }
+
+    .achievement-item {
+      padding: 2px 0;
+    }
+    .achievement-item::before {
+      content: '🏆 ';
+    }
+
+    /* ── Neofetch layout ─────────────────────────────────── */
+    .neofetch-container {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+    }
+    .neofetch-ascii {
+      color: var(--accent);
+      font-size: 0.65rem;
+      line-height: 1.2;
+      flex-shrink: 0;
+    }
+    .neofetch-info {
+      line-height: 1.65;
+    }
+    .neofetch-separator {
+      color: var(--border);
+    }
+    .neofetch-colors {
+      display: flex; gap: 2px; margin-top: 4px;
+    }
+    .neofetch-colors span {
+      width: 22px; height: 12px; display: inline-block; border-radius: 2px;
+    }
+
+    /* ── Tree view ────────────────────────────────────────── */
+    .tree-line {
+      color: var(--muted);
+    }
+    .tree-folder { color: var(--accent2); font-weight: 600; }
+    .tree-file   { color: var(--text); }
+
+    /* ── Top / htop table ─────────────────────────────────── */
+    .top-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .top-table th {
+      color: var(--bg);
+      background: var(--accent);
+      padding: 2px 10px;
+      text-align: left;
+      font-weight: 600;
+    }
+    .top-table td {
+      padding: 2px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── Cowsay ───────────────────────────────────────────── */
+    .cowsay-box {
+      color: var(--yellow);
+    }
+    .cowsay-cow {
+      color: var(--text);
+    }
+
+    /* ── Progress bar ────────────────────────────────────── */
+    .progress-bar {
+      display: inline-block;
+      background: var(--border);
+      border-radius: 3px;
+      width: 120px;
+      height: 10px;
+      overflow: hidden;
+      vertical-align: middle;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 3px;
+    }
+
+    /* ── Responsive ──────────────────────────────────────── */
+    @media (max-width: 600px) {
+      html { font-size: 13px; }
+      #terminal { padding: 0.8rem; height: 80vh; }
+      .info-label { min-width: 110px; }
+      .ascii-art { font-size: 0.55rem; }
+      .neofetch-container { flex-direction: column; gap: 8px; }
+      .neofetch-ascii { font-size: 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="terminal-window">
+  <div id="title-bar">
+    <div class="traffic-light tl-red"></div>
+    <div class="traffic-light tl-yellow"></div>
+    <div class="traffic-light tl-green"></div>
+    <span>avinash@portfolio:~</span>
+  </div>
+  <div id="terminal">
+    <div id="output"></div>
+    <div id="input-line">
+      <span class="prompt-prefix">visitor@avinash:~$&nbsp;</span>
+      <input id="cmd-input" type="text" autofocus autocomplete="off" spellcheck="false" />
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  TERMINAL PORTFOLIO — Avinash Pauskar
+// ═══════════════════════════════════════════════════════════
+
+const output   = document.getElementById('output');
+const input    = document.getElementById('cmd-input');
+const terminal = document.getElementById('terminal');
+let commandHistory = [];
+let historyIndex = -1;
+
+// ── ASCII Banner ──────────────────────────────────────────
+const BANNER = `
+<span class="ascii-art"> █████╗ ██╗   ██╗██╗███╗   ██╗ █████╗ ███████╗██╗  ██╗
+██╔══██╗██║   ██║██║████╗  ██║██╔══██╗██╔════╝██║  ██║
+███████║██║   ██║██║██╔██╗ ██║███████║███████╗███████║
+██╔══██║╚██╗ ██╔╝██║██║╚██╗██║██╔══██║╚════██║██╔══██║
+██║  ██║ ╚████╔╝ ██║██║ ╚████║██║  ██║███████║██║  ██║
+╚═╝  ╚═╝  ╚═══╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝</span>`;
+
+const WELCOME = `${BANNER}
+
+<div class="welcome-box">
+  <span class="bold highlight">Welcome to Avinash Pauskar's Terminal Portfolio</span>
+  <span class="muted">Computer Science Engineer | Full-Stack Developer | Cloud Enthusiast</span>
+
+  Type <span class="accent2 bold">help</span> to see available commands.
+</div>`;
+
+// ── Fortune Quotes ────────────────────────────────────────
+const FORTUNES = [
+  "The best way to predict the future is to create it. — Abraham Lincoln",
+  "Code is like humor. When you have to explain it, it's bad. — Cory House",
+  "First, solve the problem. Then, write the code. — John Johnson",
+  "Simplicity is the soul of efficiency. — Austin Freeman",
+  "Any fool can write code that a computer can understand. Good programmers write code that humans can understand. — Martin Fowler",
+  "Talk is cheap. Show me the code. — Linus Torvalds",
+  "It works on my machine ¯\\_(ツ)_/¯",
+  "There are only two hard things in CS: cache invalidation and naming things.",
+  "// TODO: fix this later — every developer ever",
+  "It's not a bug, it's a feature."
+];
+
+// ── Command Definitions ───────────────────────────────────
+const COMMANDS = {
+
+  help: () => `
+<span class="section-title">⌨  Available Commands</span>
+
+<span class="skill-category">📋 Portfolio</span>
+<div class="info-row"><span class="info-label highlight">about</span><span>Who am I — a short intro</span></div>
+<div class="info-row"><span class="info-label highlight">education</span><span>Academic background</span></div>
+<div class="info-row"><span class="info-label highlight">experience</span><span>Professional experience</span></div>
+<div class="info-row"><span class="info-label highlight">projects</span><span>Featured projects</span></div>
+<div class="info-row"><span class="info-label highlight">skills</span><span>Technical skill set</span></div>
+<div class="info-row"><span class="info-label highlight">achievements</span><span>Hackathon wins & recognitions</span></div>
+<div class="info-row"><span class="info-label highlight">contact</span><span>Get in touch</span></div>
+<div class="info-row"><span class="info-label highlight">social</span><span>Social & coding profiles</span></div>
+<div class="info-row"><span class="info-label highlight">all</span><span>Display full resume</span></div>
+
+<span class="skill-category">🛠  Terminal Utilities</span>
+<div class="info-row"><span class="info-label accent2">neofetch</span><span>System info with ASCII art</span></div>
+<div class="info-row"><span class="info-label accent2">whoami</span><span>Current user identity</span></div>
+<div class="info-row"><span class="info-label accent2">hostname</span><span>Machine hostname</span></div>
+<div class="info-row"><span class="info-label accent2">uname -a</span><span>System information</span></div>
+<div class="info-row"><span class="info-label accent2">pwd</span><span>Print working directory</span></div>
+<div class="info-row"><span class="info-label accent2">ls</span><span>List directory contents</span></div>
+<div class="info-row"><span class="info-label accent2">tree</span><span>Directory tree view</span></div>
+<div class="info-row"><span class="info-label accent2">cat &lt;file&gt;</span><span>Read file contents</span></div>
+<div class="info-row"><span class="info-label accent2">date</span><span>Current date & time</span></div>
+<div class="info-row"><span class="info-label accent2">uptime</span><span>System uptime</span></div>
+<div class="info-row"><span class="info-label accent2">history</span><span>Command history</span></div>
+<div class="info-row"><span class="info-label accent2">echo &lt;msg&gt;</span><span>Print a message</span></div>
+
+<span class="skill-category">📦 Package Managers</span>
+<div class="info-row"><span class="info-label orange">pip list</span><span>Python packages (skills)</span></div>
+<div class="info-row"><span class="info-label orange">npm list</span><span>Node.js packages (skills)</span></div>
+<div class="info-row"><span class="info-label orange">apt list</span><span>Installed system packages</span></div>
+<div class="info-row"><span class="info-label orange">brew list</span><span>Homebrew packages</span></div>
+
+<span class="skill-category">🎮 Fun & Extras</span>
+<div class="info-row"><span class="info-label pink">cowsay &lt;msg&gt;</span><span>Cow says your message</span></div>
+<div class="info-row"><span class="info-label pink">fortune</span><span>Random programming wisdom</span></div>
+<div class="info-row"><span class="info-label pink">top</span><span>Running processes</span></div>
+<div class="info-row"><span class="info-label pink">wget resume</span><span>Download resume</span></div>
+<div class="info-row"><span class="info-label pink">sudo &lt;cmd&gt;</span><span>Try it and see 😏</span></div>
+<div class="info-row"><span class="info-label pink">rm -rf /</span><span>Don't even think about it</span></div>
+<div class="info-row"><span class="info-label highlight">clear</span><span>Clear the terminal</span></div>
+<div class="info-row"><span class="info-label highlight">banner</span><span>Show the welcome banner</span></div>
+
+<span class="muted">Tip: Use ↑ / ↓ arrow keys to navigate history · Tab to autocomplete</span>`,
+
+  about: () => `
+<span class="section-title">👤  About Me</span>
+
+  Computer Science Engineer with experience in <span class="highlight">MERN</span> and
+  <span class="highlight">Spring Boot</span> development, cloud deployment on <span class="accent2">AWS</span>,
+  and mobile app development.
+
+  Delivered projects in event management and automation,
+  and recognized in <span class="yellow">multiple hackathons</span> for practical,
+  innovative solutions.
+
+  <span class="muted">📍 Bauxite Road, Belagavi, Karnataka</span>`,
+
+  education: () => `
+<span class="section-title">🎓  Education</span>
+
+<div class="edu-card">
+  <span class="bold yellow">KLS Gogte Institute of Technology</span> <span class="muted">— Belagavi, Karnataka</span>
+  Bachelor of Engineering in Computer Science
+  <span class="highlight">CGPA: 9.02</span>  <span class="muted">2021 – Present</span>
+</div>
+<div class="edu-card">
+  <span class="bold yellow">RL PU College of Science</span> <span class="muted">— Belagavi, Karnataka</span>
+  12th Grade
+  <span class="highlight">Percentage: 94.33%</span>  <span class="muted">2021</span>
+</div>
+<div class="edu-card">
+  <span class="bold yellow">St John's High School</span> <span class="muted">— Belagavi, Karnataka</span>
+  10th Grade
+  <span class="highlight">Percentage: 87.2%</span>  <span class="muted">2019</span>
+</div>`,
+
+  experience: () => `
+<span class="section-title">💼  Experience</span>
+
+<div class="exp-card">
+  <span class="bold purple">Esko</span> — Software Engineer Intern  <span class="muted">Feb 2025 – Present</span>
+  Developed full-stack web applications using the <span class="highlight">MERN stack</span>
+  and <span class="highlight">Java Spring Boot</span>, collaborating with cross-functional
+  teams. Utilized <span class="accent2">Git/GitLab</span> for version control.
+  Experienced with <span class="yellow">Agile (Jira)</span> and deployed applications
+  on <span class="accent2">AWS Cloud</span> infrastructure.
+</div>
+<div class="exp-card">
+  <span class="bold purple">Theta Dynamics Pvt. Ltd.</span> — Frontend Developer  <span class="muted">Sept 2024 – Jan 2025</span>
+  <span class="muted">Belagavi, Karnataka</span>
+  Built and integrated the frontend for <a href="https://hirehack.io" target="_blank">Hirehack</a>,
+  an AI-powered interview preparation platform, ensuring
+  seamless API communication and a responsive, user-friendly interface.
+</div>`,
+
+  projects: () => `
+<span class="section-title">🚀  Projects</span>
+
+<div class="project-card">
+  <span class="bold accent2">AURA Website</span>  <span class="muted">[ React.js · Kotlin · Jetpack Compose ]</span>
+  Developed the official website for AURA, the largest cultural
+  fest in college, using React.js to showcase event details &
+  enable external student registrations. Also built mobile apps
+  using Jetpack Compose & Kotlin for entry/exit/attendance marking,
+  along with an Admin Dashboard for event statistics.
+</div>
+<div class="project-card">
+  <span class="bold accent2">Avalanche Website</span>  <span class="muted">[ React.js · Node.js · Express · MongoDB ]</span>
+  Developed "Avalanche" college fest website with a "Pixel Parade"
+  theme. Features event displays, registrations, QR-based payments,
+  and a secure Node.js + Express backend with MongoDB.
+</div>
+<div class="project-card">
+  <span class="bold accent2">Bulk Certificate Generator</span>  <span class="muted">[ Spring Boot · MongoDB · SMTP ]</span>
+  Automates certificate distribution for the Avalanche event.
+  Upload a CSV of participant details, select a template, and
+  personalized certificates are generated & sent via SMTP email.
+  MongoDB stores templates and participant metadata.
+</div>`,
+
+  skills: () => `
+<span class="section-title">⚡  Technical Skills</span>
+
+<span class="skill-category">Languages</span>
+<span class="skill-tag">Java</span><span class="skill-tag">HTML</span><span class="skill-tag">CSS</span><span class="skill-tag">JavaScript</span>
+
+<span class="skill-category">Frameworks & Libraries</span>
+<span class="skill-tag">Spring Boot</span><span class="skill-tag">React.js</span><span class="skill-tag">Node.js</span><span class="skill-tag">Express.js</span>
+
+<span class="skill-category">Cloud — AWS</span>
+<span class="skill-tag">EC2</span><span class="skill-tag">Route 53</span><span class="skill-tag">EBS</span><span class="skill-tag">ECS</span><span class="skill-tag">S3</span><span class="skill-tag">Lambda Functions</span><span class="skill-tag">DynamoDB</span>
+
+<span class="skill-category">Databases</span>
+<span class="skill-tag">MySQL</span><span class="skill-tag">MongoDB</span><span class="skill-tag">PostgreSQL</span>
+
+<span class="skill-category">Containerization</span>
+<span class="skill-tag">Docker</span>
+
+<span class="skill-category">Developer Tools</span>
+<span class="skill-tag">Gradle</span><span class="skill-tag">Maven</span><span class="skill-tag">Android Studio</span><span class="skill-tag">Git</span><span class="skill-tag">GitHub</span><span class="skill-tag">Postman</span><span class="skill-tag">Jenkins</span>
+
+<span class="skill-category">UI / UX</span>
+<span class="skill-tag">Figma</span><span class="skill-tag">Canva</span>`,
+
+  achievements: () => `
+<span class="section-title">🏆  Achievements — 7 Hackathon Wins</span>
+
+<div class="achievement-item"><span class="bold yellow">Finalist</span> — Smart India Hackathon (SIH) — National Finale</div>
+<div class="achievement-item"><span class="bold highlight">1st Place</span> — PyHack (BelPy Python Communities)</div>
+<div class="achievement-item"><span class="bold highlight">1st Place</span> — Hack-to-Future</div>
+<div class="achievement-item"><span class="bold accent2">2nd Place</span> — Wave 2.0 (Basaveshwar Engineering College, Bagalkot)</div>
+<div class="achievement-item"><span class="bold accent2">2nd Place</span> — Aura-2025 Digital Entry System</div>
+<div class="achievement-item"><span class="bold orange">Runner-Up</span> — TCE Hackathon Idea Bazaar (TCE Gadag)</div>
+<div class="achievement-item"><span class="bold orange">Runner-Up</span> — Odyssey Hackathon</div>`,
+
+  contact: () => `
+<span class="section-title">📬  Contact</span>
+
+<div class="info-row"><span class="info-label yellow">📧  Email</span><a href="mailto:avinashpauskar05@gmail.com">avinashpauskar05@gmail.com</a></div>
+<div class="info-row"><span class="info-label yellow">📱  Phone</span><span>+91-9008500585</span></div>
+<div class="info-row"><span class="info-label yellow">📍  Location</span><span>Bauxite Road, Belagavi, Karnataka</span></div>`,
+
+  social: () => `
+<span class="section-title">🔗  Social & Profiles</span>
+
+<div class="info-row"><span class="info-label yellow">GitHub</span><a href="https://github.com/Avinash-Pauskar" target="_blank">github.com/Avinash-Pauskar</a></div>
+<div class="info-row"><span class="info-label yellow">LinkedIn</span><a href="https://linkedin.com/in/avinash-p05" target="_blank">linkedin.com/in/avinash-p05</a></div>`,
+
+  all: () => {
+    return [
+      COMMANDS.about(),
+      COMMANDS.education(),
+      COMMANDS.experience(),
+      COMMANDS.projects(),
+      COMMANDS.skills(),
+      COMMANDS.achievements(),
+      COMMANDS.contact(),
+      COMMANDS.social()
+    ].join('\n');
+  },
+
+  banner: () => WELCOME,
+
+  clear: () => '__CLEAR__',
+
+  // ── TERMINAL UTILITIES ──────────────────────────────────
+
+  neofetch: () => `
+<div class="neofetch-container">
+  <pre class="neofetch-ascii">        /\\\n       /  \\\n      /    \\\n     /      \\\n    /   ,,   \\\n   /   |  |  -\\\n  /_-''    ''-_\\\n</pre>
+  <div class="neofetch-info">
+    <span class="bold highlight">avinash</span><span class="muted">@</span><span class="bold accent2">portfolio</span>
+    <span class="neofetch-separator">──────────────────────</span>
+    <span class="yellow">OS:</span> AvinashOS 4.0 (Belagavi Edition)
+    <span class="yellow">Host:</span> KLS Gogte Institute of Technology
+    <span class="yellow">Kernel:</span> CS-Engineering v9.02-GPA
+    <span class="yellow">Uptime:</span> 4+ years in tech
+    <span class="yellow">Packages:</span> 26 (npm) · 7 (aws) · 3 (db)
+    <span class="yellow">Shell:</span> bash 5.1.16
+    <span class="yellow">IDE:</span> VS Code · Android Studio · IntelliJ
+    <span class="yellow">Languages:</span> Java · JavaScript · HTML · CSS
+    <span class="yellow">Frameworks:</span> React.js · Spring Boot · Node.js · Express
+    <span class="yellow">Cloud:</span> AWS (EC2, S3, Lambda, ECS, Route53)
+    <span class="yellow">Hackathons:</span> 7 wins 🏆
+    <div class="neofetch-colors">
+      <span style="background:#ff5f56"></span>
+      <span style="background:#ffbd2e"></span>
+      <span style="background:#27c93f"></span>
+      <span style="background:#00e5ff"></span>
+      <span style="background:#c678dd"></span>
+      <span style="background:#ff6b81"></span>
+      <span style="background:#39ff14"></span>
+      <span style="background:#fff"></span>
+    </div>
+  </div>
+</div>`,
+
+  whoami: () => `<span class="highlight">avinash-pauskar</span> <span class="muted">(uid=1000 gid=1000 groups=developer,fullstack,cloud,hackathon-winner)</span>`,
+
+  hostname: () => `<span class="accent2">avinash-pauskar-portfolio.netlify.app</span>`,
+
+  pwd: () => `<span class="accent2">/home/avinash/portfolio</span>`,
+
+  uptime: () => {
+    const start = new Date('2021-08-01');
+    const now = new Date();
+    const years = now.getFullYear() - start.getFullYear();
+    const days = Math.floor((now - start) / (1000*60*60*24));
+    return `<span class="muted"> up ${days} days (${years}+ years in tech),  1 user,  load average: 0.42, 0.69, 0.88</span>
+<span class="muted"> Currently: Software Engineer Intern @ Esko</span>`;
+  },
+
+  date: () => {
+    const d = new Date();
+    return `<span class="text">${d.toString()}</span>`;
+  },
+
+  history: () => {
+    if (commandHistory.length === 0) return '<span class="muted">No commands in history yet.</span>';
+    return commandHistory.map((c, i) => `  <span class="muted">${String(i + 1).padStart(4)}</span>  ${escapeHTML(c)}`).join('\n');
+  },
+
+  ls: () => `<span class="tree-folder">about.txt</span>    <span class="tree-folder">education.md</span>    <span class="tree-folder">experience.json</span>    <span class="tree-folder">projects/</span>
+<span class="tree-folder">skills.yaml</span>   <span class="tree-folder">achievements.log</span>  <span class="tree-folder">contact.conf</span>       <span class="tree-folder">social.links</span>
+<span class="tree-file">README.md</span>     <span class="tree-file">resume.pdf</span>         <span class="tree-file">.gitconfig</span>          <span class="tree-file">package.json</span>`,
+
+  tree: () => `<span class="tree-folder">.</span>
+<span class="tree-line">├── </span><span class="tree-file">README.md</span>
+<span class="tree-line">├── </span><span class="tree-file">resume.pdf</span>
+<span class="tree-line">├── </span><span class="tree-file">about.txt</span>
+<span class="tree-line">├── </span><span class="tree-file">education.md</span>
+<span class="tree-line">├── </span><span class="tree-file">experience.json</span>
+<span class="tree-line">├── </span><span class="tree-file">skills.yaml</span>
+<span class="tree-line">├── </span><span class="tree-file">achievements.log</span>
+<span class="tree-line">├── </span><span class="tree-file">contact.conf</span>
+<span class="tree-line">├── </span><span class="tree-file">social.links</span>
+<span class="tree-line">├── </span><span class="tree-file">package.json</span>
+<span class="tree-line">├── </span><span class="tree-file">.gitconfig</span>
+<span class="tree-line">└── </span><span class="tree-folder">projects/</span>
+<span class="tree-line">    ├── </span><span class="tree-file">aura-website.jsx</span>
+<span class="tree-line">    ├── </span><span class="tree-file">avalanche-website.jsx</span>
+<span class="tree-line">    └── </span><span class="tree-file">bulk-cert-generator.java</span>
+
+<span class="muted">3 directories, 13 files</span>`,
+
+  top: () => {
+    return `
+<span class="bold highlight">top - AvinashOS</span>  <span class="muted">Tasks: 7 total, 3 running, 4 sleeping</span>
+<span class="muted">%Cpu(s): 87.3 us,  4.2 sy,  0.0 ni,  8.5 id</span>
+<span class="muted">MiB Mem :  16384.0 total,   2048.0 free,  12288.0 used,   2048.0 cache</span>
+
+<table class="top-table">
+  <tr><th>PID</th><th>PROCESS</th><th>STATUS</th><th>CPU%</th><th>TIME</th></tr>
+  <tr><td class="highlight">1</td><td>spring-boot-dev</td><td><span class="highlight">RUNNING</span></td><td>28.4</td><td>1200:00</td></tr>
+  <tr><td class="highlight">2</td><td>react-frontend</td><td><span class="highlight">RUNNING</span></td><td>22.1</td><td>980:00</td></tr>
+  <tr><td class="highlight">3</td><td>node-backend</td><td><span class="highlight">RUNNING</span></td><td>18.7</td><td>850:00</td></tr>
+  <tr><td class="accent2">4</td><td>aws-deployment</td><td><span class="accent2">SLEEPING</span></td><td>8.3</td><td>640:00</td></tr>
+  <tr><td class="accent2">5</td><td>docker-containers</td><td><span class="accent2">SLEEPING</span></td><td>5.2</td><td>420:00</td></tr>
+  <tr><td class="accent2">6</td><td>hackathon-grind</td><td><span class="accent2">SLEEPING</span></td><td>3.8</td><td>336:00</td></tr>
+  <tr><td class="accent2">7</td><td>figma-designs</td><td><span class="accent2">SLEEPING</span></td><td>0.8</td><td>120:00</td></tr>
+</table>`;
+  },
+
+  fortune: () => {
+    const f = FORTUNES[Math.floor(Math.random() * FORTUNES.length)];
+    return `<span class="yellow">🔮 ${f}</span>`;
+  },
+
+};  // end COMMANDS
+
+// ── Files for cat command ─────────────────────────────────
+const FILES = {
+  'about.txt': () => COMMANDS.about(),
+  'education.md': () => COMMANDS.education(),
+  'experience.json': () => COMMANDS.experience(),
+  'skills.yaml': () => COMMANDS.skills(),
+  'achievements.log': () => COMMANDS.achievements(),
+  'contact.conf': () => COMMANDS.contact(),
+  'social.links': () => COMMANDS.social(),
+  'readme.md': () => `<span class="bold highlight"># Avinash Pauskar — Terminal Portfolio</span>\n\n<span class="muted">A terminal-style portfolio built with vanilla HTML, CSS & JS.</span>\n<span class="muted">Type <span class="accent2">help</span> to explore.</span>\n\n<span class="yellow">## Quick Start</span>\n  $ about\n  $ skills\n  $ projects`,
+  'resume.pdf': () => `<span class="pink">[binary file — use <span class="accent2">wget resume</span> to download]</span>`,
+  'package.json': () => `<span class="purple">{</span>\n  <span class="accent2">"name"</span>: <span class="yellow">"avinash-portfolio"</span>,\n  <span class="accent2">"version"</span>: <span class="yellow">"2.0.0"</span>,\n  <span class="accent2">"description"</span>: <span class="yellow">"Terminal-style portfolio"</span>,\n  <span class="accent2">"author"</span>: <span class="yellow">"Avinash Pauskar"</span>,\n  <span class="accent2">"keywords"</span>: [<span class="yellow">"fullstack"</span>, <span class="yellow">"mern"</span>, <span class="yellow">"spring-boot"</span>, <span class="yellow">"aws"</span>],\n  <span class="accent2">"license"</span>: <span class="yellow">"MIT"</span>\n<span class="purple">}</span>`,
+  '.gitconfig': () => `<span class="purple">[user]</span>\n  name  = <span class="highlight">Avinash Pauskar</span>\n  email = <span class="accent2">avinashpauskar05@gmail.com</span>\n<span class="purple">[core]</span>\n  editor = <span class="text">code --wait</span>\n<span class="purple">[alias]</span>\n  st = status\n  co = checkout\n  br = branch`,
+};
+
+// ── Helpers ───────────────────────────────────────────────
+function appendHTML(html) {
+  const div = document.createElement('div');
+  div.classList.add('line');
+  div.innerHTML = html;
+  output.appendChild(div);
+  scrollToBottom();
+}
+
+function scrollToBottom() {
+  terminal.scrollTop = terminal.scrollHeight;
+}
+
+function processCommand(raw) {
+  const cmd = raw.trim().toLowerCase();
+  if (!cmd) return;
+
+  // Echo the command
+  appendHTML(`<span class="prompt-prefix">visitor@avinash:~$</span> <span class="cmd-text">${escapeHTML(raw)}</span>`);
+
+  // Save history
+  commandHistory.push(raw);
+  historyIndex = commandHistory.length;
+
+  if (cmd === 'clear') {
+    output.innerHTML = '';
+    return;
+  }
+
+  // ── Direct command match ──
+  const handler = COMMANDS[cmd];
+  if (handler) {
+    appendHTML(handler());
+    appendHTML('');
+    return;
+  }
+
+  // ── Parametric commands ──
+
+  // echo <message>
+  if (cmd.startsWith('echo ')) {
+    const msg = raw.trim().substring(5);
+    appendHTML(`<span class="text">${escapeHTML(msg)}</span>`);
+    appendHTML('');
+    return;
+  }
+
+  // cat <filename>
+  if (cmd.startsWith('cat ')) {
+    const filename = cmd.substring(4).trim();
+    const file = FILES[filename];
+    if (file) {
+      appendHTML(file());
+    } else {
+      appendHTML(`<span class="pink">cat: ${escapeHTML(filename)}: No such file or directory</span>\n<span class="muted">Available files: ${Object.keys(FILES).join(', ')}</span>`);
+    }
+    appendHTML('');
+    return;
+  }
+
+  // cowsay <message>
+  if (cmd.startsWith('cowsay')) {
+    const msg = raw.trim().substring(6).trim() || 'Hire Avinash!';
+    const border = '─'.repeat(msg.length + 2);
+    appendHTML(`<span class="cowsay-box"> ┌${border}┐\n │ ${escapeHTML(msg)} │\n └${border}┘</span>\n<span class="cowsay-cow">        \\   ^__^\n         \\  (oo)\\_______\n            (__)\\       )\\/\\\n                ||----w |\n                ||     ||</span>`);
+    appendHTML('');
+    return;
+  }
+
+  // sudo <anything>
+  if (cmd.startsWith('sudo ')) {
+    appendHTML(`<span class="pink bold">⚠ Permission denied.</span>\n<span class="muted">Nice try! But this terminal runs in user mode only.</span>\n<span class="muted">Avinash is the only sudoer here. 😏</span>`);
+    appendHTML('');
+    return;
+  }
+
+  // uname
+  if (cmd === 'uname' || cmd === 'uname -a') {
+    appendHTML(`<span class="text">AvinashOS 4.0.0-portfolio #1 SMP ${new Date().toDateString()} x86_64 GNU/Linux</span>`);
+    appendHTML('');
+    return;
+  }
+
+  // pip list
+  if (cmd === 'pip list' || cmd === 'pip3 list') {
+    appendHTML(`<span class="bold highlight">Package              Version    Status</span>\n<span class="neofetch-separator">────────────────────────────────────────────</span>\njava                 17.0.2     <span class="highlight">✓ installed</span>\nhtml-css             5.3.0      <span class="highlight">✓ installed</span>\njavascript-es6       2024.1     <span class="highlight">✓ installed</span>\nspring-boot          3.2.0      <span class="highlight">✓ installed</span>\nreact                18.2.0     <span class="highlight">✓ installed</span>\nnodejs               20.10.0    <span class="highlight">✓ installed</span>\nexpress              4.18.2     <span class="highlight">✓ installed</span>\ndocker               24.0.7     <span class="highlight">✓ installed</span>\nmongodb-driver       4.11.0     <span class="highlight">✓ installed</span>\nmysql-connector      8.2.0      <span class="highlight">✓ installed</span>\npostgresql           16.1       <span class="highlight">✓ installed</span>\naws-sdk              3.450.0    <span class="highlight">✓ installed</span>\nfigma-plugin         1.0.0      <span class="highlight">✓ installed</span>\n\n<span class="muted">[13 packages installed]</span>`);
+    appendHTML('');
+    return;
+  }
+
+  // npm list
+  if (cmd === 'npm list' || cmd === 'npm ls') {
+    appendHTML(`<span class="accent2">avinash-portfolio@2.0.0</span> /home/avinash/portfolio\n├── <span class="highlight">react</span>@18.2.0\n├── <span class="highlight">react-dom</span>@18.2.0\n├── <span class="highlight">node</span>@20.10.0\n├── <span class="highlight">express</span>@4.18.2\n├── <span class="highlight">mongodb</span>@6.3.0\n├── <span class="highlight">spring-boot-starter</span>@3.2.0\n├── <span class="highlight">aws-sdk</span>@3.450.0\n├── <span class="highlight">docker</span>@24.0.7\n├── <span class="highlight">jetpack-compose</span>@1.5.4\n├── <span class="highlight">kotlin</span>@1.9.21\n├── <span class="highlight">gradle</span>@8.5.0\n├── <span class="highlight">maven</span>@3.9.6\n└── <span class="highlight">jenkins</span>@2.426.1\n\n<span class="muted">13 packages, 0 vulnerabilities</span>`);
+    appendHTML('');
+    return;
+  }
+
+  // apt list
+  if (cmd === 'apt list' || cmd === 'apt list --installed') {
+    appendHTML(`<span class="muted">Listing installed packages...</span>\n\n<span class="highlight">java/stable</span>           17.0.2-1   amd64  [installed]\n<span class="highlight">nodejs/stable</span>         20.10.0-1  amd64  [installed]\n<span class="highlight">docker-ce/stable</span>      24.0.7-1   amd64  [installed]\n<span class="highlight">mongodb-org/stable</span>    7.0.4-1    amd64  [installed]\n<span class="highlight">mysql-server/stable</span>   8.2.0-1    amd64  [installed]\n<span class="highlight">postgresql/stable</span>     16.1-1     amd64  [installed]\n<span class="highlight">git/stable</span>            2.43.0-1   amd64  [installed]\n<span class="highlight">gradle/stable</span>         8.5.0-1    amd64  [installed]\n<span class="highlight">maven/stable</span>          3.9.6-1    amd64  [installed]\n<span class="highlight">jenkins/stable</span>        2.426.1-1  amd64  [installed]\n<span class="highlight">postman/stable</span>        10.21.0-1  amd64  [installed]\n<span class="highlight">figma-linux/stable</span>    0.11.4-1   amd64  [installed]\n\n<span class="muted">12 packages installed.</span>`);
+    appendHTML('');
+    return;
+  }
+
+  // brew list
+  if (cmd === 'brew list') {
+    appendHTML(`<span class="muted">==> Formulae</span>\n<span class="highlight">git</span>  <span class="highlight">gradle</span>  <span class="highlight">maven</span>  <span class="highlight">node</span>  <span class="highlight">docker</span>  <span class="highlight">mongodb-community</span>  <span class="highlight">postgresql@16</span>  <span class="highlight">openjdk@17</span>\n\n<span class="muted">==> Casks</span>\n<span class="accent2">visual-studio-code</span>  <span class="accent2">android-studio</span>  <span class="accent2">intellij-idea</span>  <span class="accent2">postman</span>  <span class="accent2">figma</span>  <span class="accent2">docker-desktop</span>`);
+    appendHTML('');
+    return;
+  }
+
+  // wget resume
+  if (cmd === 'wget resume' || cmd === 'wget resume.pdf' || cmd === 'curl resume') {
+    appendHTML(`<span class="muted">--${new Date().toISOString()}--  https://avinash-portfolio.dev/resume.pdf</span>\n<span class="muted">Resolving avinash-portfolio.dev... </span><span class="highlight">connected.</span>\n<span class="muted">HTTP request sent, awaiting response... </span><span class="highlight">200 OK</span>\n<span class="muted">Length: 100859 (98K) [application/pdf]</span>\n<span class="muted">Saving to: 'Avinash_Pauskar_Resume.pdf'</span>\n\n<span class="highlight">Avinash_Pauskar_Resume 100%[==================>]  98.50K  --.-KB/s  in 0.1s</span>\n\n<span class="highlight bold">✓ Resume downloaded!</span>\n<span class="muted">📧 Or email </span><a href="mailto:avinashpauskar05@gmail.com">avinashpauskar05@gmail.com</a><span class="muted"> for the latest copy.</span>`);
+    appendHTML('');
+    return;
+  }
+
+  // rm -rf /
+  if (cmd.startsWith('rm -rf') || cmd === 'rm -rf /') {
+    appendHTML(`<span class="pink bold">💀 Nice try!</span>\n<span class="muted">This portfolio is indestructible. It survived 7 hackathons.</span>\n<span class="muted">You think a little rm -rf scares it? 😤</span>`);
+    appendHTML('');
+    return;
+  }
+
+  // man <command>
+  if (cmd.startsWith('man ')) {
+    const topic = cmd.substring(4).trim();
+    if (COMMANDS[topic]) {
+      appendHTML(`<span class="bold highlight">MANUAL: ${topic.toUpperCase()}(1)</span>\n\n<span class="yellow">NAME</span>\n    ${topic} — display ${topic} information\n\n<span class="yellow">SYNOPSIS</span>\n    <span class="accent2">${topic}</span>\n\n<span class="yellow">DESCRIPTION</span>\n    Displays Avinash Pauskar's ${topic} details in the terminal.\n    Part of the avinash-portfolio toolkit.\n\n<span class="yellow">AUTHOR</span>\n    Written by Avinash Pauskar <avinashpauskar05@gmail.com>`);
+    } else {
+      appendHTML(`<span class="pink">No manual entry for ${escapeHTML(topic)}</span>`);
+    }
+    appendHTML('');
+    return;
+  }
+
+  // git status
+  if (cmd === 'git status') {
+    appendHTML(`<span class="highlight">On branch main</span>\n<span class="muted">Your branch is up to date with 'origin/main'.</span>\n\n<span class="text">Changes not staged for commit:</span>\n  <span class="pink">(modified)  skills.yaml</span>     <span class="muted">← always learning</span>\n  <span class="pink">(modified)  projects/</span>       <span class="muted">← always building</span>\n\n<span class="highlight">Untracked files:</span>\n  <span class="accent2">(new)  next-big-idea.md</span>  <span class="muted">← coming soon</span>`);
+    appendHTML('');
+    return;
+  }
+
+  // git log
+  if (cmd === 'git log') {
+    appendHTML(`<span class="yellow">commit a1b2c3d</span> <span class="muted">(HEAD -> main, origin/main)</span>\nAuthor: Avinash Pauskar <avinashpauskar05@gmail.com>\nDate:   Feb 2025\n\n    <span class="text">feat: Started as SWE Intern @ Esko</span>\n\n<span class="yellow">commit e4f5g6h</span>\nAuthor: Avinash Pauskar\nDate:   Sept 2024\n\n    <span class="text">feat: Frontend dev at Theta Dynamics (Hirehack)</span>\n\n<span class="yellow">commit i7j8k9l</span>\nAuthor: Avinash Pauskar\nDate:   2024\n\n    <span class="text">feat: Built AURA & Avalanche fest websites</span>\n\n<span class="yellow">commit m0n1o2p</span>\nAuthor: Avinash Pauskar\nDate:   2021\n\n    <span class="text">init: Started B.E. in Computer Science @ GIT</span>`);
+    appendHTML('');
+    return;
+  }
+
+  // docker ps
+  if (cmd === 'docker ps') {
+    appendHTML(`<span class="bold highlight">CONTAINER ID   IMAGE                STATUS          PORTS</span>\n<span class="muted">a1b2c3d4e5f6</span>   react-portfolio      <span class="highlight">Up 4 years</span>      0.0.0.0:3000->3000\n<span class="muted">f6e5d4c3b2a1</span>   spring-boot-api      <span class="highlight">Up 4 years</span>      0.0.0.0:8080->8080\n<span class="muted">1a2b3c4d5e6f</span>   mongo:7.0            <span class="highlight">Up 4 years</span>      0.0.0.0:27017->27017\n<span class="muted">6f5e4d3c2b1a</span>   nginx:latest         <span class="highlight">Up 4 years</span>      0.0.0.0:80->80`);
+    appendHTML('');
+    return;
+  }
+
+  // exit
+  if (cmd === 'exit' || cmd === 'quit' || cmd === 'logout') {
+    appendHTML(`<span class="muted">logout</span>\n<span class="yellow">Thanks for visiting! 👋</span>\n<span class="muted">Connection to avinash-portfolio closed.</span>\n\n<span class="text">📧 </span><a href="mailto:avinashpauskar05@gmail.com">avinashpauskar05@gmail.com</a>\n<span class="text">🔗 </span><a href="https://github.com/Avinash-Pauskar" target="_blank">github.com/Avinash-Pauskar</a>\n<span class="text">🔗 </span><a href="https://linkedin.com/in/avinash-p05" target="_blank">linkedin.com/in/avinash-p05</a>`);
+    appendHTML('');
+    return;
+  }
+
+  // ── Fallback ──
+  appendHTML(`<span class="pink">Command not found: <span class="bold">${escapeHTML(cmd)}</span></span>\nType <span class="accent2 bold">help</span> to see available commands.`);
+  appendHTML('');
+}
+
+function escapeHTML(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── Event Listeners ───────────────────────────────────────
+input.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    const val = input.value;
+    input.value = '';
+    processCommand(val);
+  }
+  if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (historyIndex > 0) {
+      historyIndex--;
+      input.value = commandHistory[historyIndex];
+    }
+  }
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (historyIndex < commandHistory.length - 1) {
+      historyIndex++;
+      input.value = commandHistory[historyIndex];
+    } else {
+      historyIndex = commandHistory.length;
+      input.value = '';
+    }
+  }
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const partial = input.value.trim().toLowerCase();
+    const allCmds = [...Object.keys(COMMANDS), 'cat', 'echo', 'cowsay', 'sudo', 'uname', 'uname -a', 'pip list', 'npm list', 'npm ls', 'apt list', 'brew list', 'wget resume', 'rm -rf /', 'man', 'git status', 'git log', 'docker ps', 'exit'];
+    const matches = allCmds.filter(c => c.startsWith(partial));
+    if (matches.length === 1) {
+      input.value = matches[0];
+    } else if (matches.length > 1 && partial.length > 0) {
+      appendHTML(`<span class="prompt-prefix">visitor@avinash:~$</span> <span class="cmd-text">${escapeHTML(input.value)}</span>`);
+      appendHTML(`<span class="muted">${matches.join('  ')}</span>`);
+    }
+  }
+});
+
+// Click anywhere to focus input
+terminal.addEventListener('click', () => input.focus());
+
+// ── Boot Sequence ─────────────────────────────────────────
+function boot() {
+  const lines = [
+    { text: '<span class="muted">[system] Initializing terminal...</span>', delay: 0 },
+    { text: '<span class="muted">[system] Loading portfolio data...</span>', delay: 400 },
+    { text: '<span class="muted">[system] Connection established ✓</span>', delay: 800 },
+    { text: '', delay: 1000 },
+    { text: WELCOME, delay: 1200 }
+  ];
+
+  input.disabled = true;
+
+  lines.forEach(({ text, delay }) => {
+    setTimeout(() => {
+      appendHTML(text);
+      if (delay === lines[lines.length - 1].delay) {
+        input.disabled = false;
+        input.focus();
+      }
+    }, delay);
+  });
+}
+
+boot();
+</script>
+
+</body>
+</html>
