@@ -708,7 +708,15 @@ const FILES = {
   'contact.conf': () => COMMANDS.contact(),
   'social.links': () => COMMANDS.social(),
   'readme.md': () => `<span class="bold highlight"># Avinash Pauskar — Terminal Portfolio</span>\n\n<span class="muted">A terminal-style portfolio built with vanilla HTML, CSS & JS.</span>\n<span class="muted">Type <span class="accent2">help</span> to explore.</span>\n\n<span class="yellow">## Quick Start</span>\n  $ about\n  $ skills\n  $ projects`,
-  'resume.pdf': () => `<span class="pink">[binary file — use <span class="accent2">wget resume</span> to download]</span>`,
+  'resume.pdf': () => {
+    const a = document.createElement('a');
+    a.href = 'Avinash_Pauskar_Resume.pdf';
+    a.download = 'Avinash_Pauskar_Resume.pdf';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    return `<span class="highlight bold">✓ Downloading resume...</span>\n<span class="muted">Or use: <span class="accent2">wget resume</span></span>`;
+  },
   'package.json': () => `<span class="purple">{</span>\n  <span class="accent2">"name"</span>: <span class="yellow">"avinash-portfolio"</span>,\n  <span class="accent2">"version"</span>: <span class="yellow">"2.0.0"</span>,\n  <span class="accent2">"description"</span>: <span class="yellow">"Terminal-style portfolio"</span>,\n  <span class="accent2">"author"</span>: <span class="yellow">"Avinash Pauskar"</span>,\n  <span class="accent2">"keywords"</span>: [<span class="yellow">"fullstack"</span>, <span class="yellow">"mern"</span>, <span class="yellow">"spring-boot"</span>, <span class="yellow">"aws"</span>],\n  <span class="accent2">"license"</span>: <span class="yellow">"MIT"</span>\n<span class="purple">}</span>`,
   '.gitconfig': () => `<span class="purple">[user]</span>\n  name  = <span class="highlight">Avinash Pauskar</span>\n  email = <span class="accent2">avinashpauskar05@gmail.com</span>\n<span class="purple">[core]</span>\n  editor = <span class="text">code --wait</span>\n<span class="purple">[alias]</span>\n  st = status\n  co = checkout\n  br = branch`,
 };
@@ -825,8 +833,15 @@ function processCommand(raw) {
   }
 
   // wget resume
-  if (cmd === 'wget resume' || cmd === 'wget resume.pdf' || cmd === 'curl resume') {
-    appendHTML(`<span class="muted">--${new Date().toISOString()}--  https://avinash-portfolio.dev/resume.pdf</span>\n<span class="muted">Resolving avinash-portfolio.dev... </span><span class="highlight">connected.</span>\n<span class="muted">HTTP request sent, awaiting response... </span><span class="highlight">200 OK</span>\n<span class="muted">Length: 100859 (98K) [application/pdf]</span>\n<span class="muted">Saving to: 'Avinash_Pauskar_Resume.pdf'</span>\n\n<span class="highlight">Avinash_Pauskar_Resume 100%[==================>]  98.50K  --.-KB/s  in 0.1s</span>\n\n<span class="highlight bold">✓ Resume downloaded!</span>\n<span class="muted">📧 Or email </span><a href="mailto:avinashpauskar05@gmail.com">avinashpauskar05@gmail.com</a><span class="muted"> for the latest copy.</span>`);
+  if (cmd === 'wget resume' || cmd === 'wget resume.pdf' || cmd === 'curl resume' || cmd === 'download resume') {
+    appendHTML(`<span class="muted">--${new Date().toISOString()}--  https://avinash-pauskar-portfolio.netlify.app/Avinash_Pauskar_Resume.pdf</span>\n<span class="muted">Resolving avinash-pauskar-portfolio.netlify.app... </span><span class="highlight">connected.</span>\n<span class="muted">HTTP request sent, awaiting response... </span><span class="highlight">200 OK</span>\n<span class="muted">Length: 100859 (98K) [application/pdf]</span>\n<span class="muted">Saving to: 'Avinash_Pauskar_Resume.pdf'</span>\n\n<span class="highlight">Avinash_Pauskar_Resume 100%[==================>]  98.50K  --.-KB/s  in 0.1s</span>\n\n<span class="highlight bold">✓ Resume downloaded!</span>\n<span class="muted">📧 Or email </span><a href="mailto:avinashpauskar05@gmail.com">avinashpauskar05@gmail.com</a><span class="muted"> for the latest copy.</span>`);
+    // Trigger actual file download
+    const a = document.createElement('a');
+    a.href = 'Avinash_Pauskar_Resume.pdf';
+    a.download = 'Avinash_Pauskar_Resume.pdf';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
     appendHTML('');
     return;
   }
