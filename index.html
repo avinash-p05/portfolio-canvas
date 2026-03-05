@@ -30,12 +30,17 @@
 
     body {
       background: var(--bg);
+      background-image: url('background.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
       color: var(--text);
       font-family: var(--font);
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      align-items: flex-start;
+      align-items: center;
       padding: 1.5rem;
       overflow-x: hidden;
     }
@@ -60,7 +65,9 @@
     #terminal-window {
       width: 100%;
       max-width: 880px;
-      background: var(--surface);
+      background: rgba(17, 24, 34, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--border);
       border-radius: 10px;
       overflow: hidden;
@@ -332,13 +339,34 @@
     }
 
     /* ── Responsive ──────────────────────────────────────── */
+    @media (max-width: 900px) {
+      body { padding: 1rem; }
+      #terminal-window { border-radius: 8px; }
+    }
+
     @media (max-width: 600px) {
       html { font-size: 13px; }
-      #terminal { padding: 0.8rem; height: 80vh; }
+      body {
+        padding: 0.5rem;
+        background-attachment: scroll; /* fixed breaks on iOS */
+        background-position: center top;
+      }
+      #terminal-window {
+        border-radius: 6px;
+        max-width: 100%;
+      }
+      #terminal { padding: 0.8rem; height: 85vh; }
       .info-label { min-width: 110px; }
       .ascii-art { font-size: 0.55rem; }
       .neofetch-container { flex-direction: column; gap: 8px; }
       .neofetch-ascii { font-size: 0.5rem; }
+    }
+
+    @media (max-width: 380px) {
+      html { font-size: 12px; }
+      body { padding: 0.25rem; }
+      #terminal { padding: 0.6rem; height: 88vh; }
+      .info-label { min-width: 90px; }
     }
   </style>
 </head>
@@ -488,7 +516,7 @@ const COMMANDS = {
 <span class="section-title">💼  Experience</span>
 
 <div class="exp-card">
-  <span class="bold purple">Esko</span> — Software Engineer Intern  <span class="muted">Feb 2025 – Present</span>
+  <span class="bold purple">Esko</span> — Software Engineer Trainee  <span class="muted">Feb 2025 – Present</span>
   Developed full-stack web applications using the <span class="highlight">MERN stack</span>
   and <span class="highlight">Java Spring Boot</span>, collaborating with cross-functional
   teams. Utilized <span class="accent2">Git/GitLab</span> for version control.
@@ -568,13 +596,13 @@ const COMMANDS = {
 
 <div class="info-row"><span class="info-label yellow">📧  Email</span><a href="mailto:avinashpauskar05@gmail.com">avinashpauskar05@gmail.com</a></div>
 <div class="info-row"><span class="info-label yellow">📱  Phone</span><span>+91-9008500585</span></div>
-<div class="info-row"><span class="info-label yellow">📍  Location</span><span>Bauxite Road, Belagavi, Karnataka</span></div>`,
+<div class="info-row"><span class="info-label yellow">📍  Location</span><span>Belagavi, Karnataka</span></div>`,
 
   social: () => `
 <span class="section-title">🔗  Social & Profiles</span>
 
-<div class="info-row"><span class="info-label yellow">GitHub</span><a href="https://github.com/Avinash-Pauskar" target="_blank">github.com/Avinash-Pauskar</a></div>
-<div class="info-row"><span class="info-label yellow">LinkedIn</span><a href="https://linkedin.com/in/avinash-p05" target="_blank">linkedin.com/in/avinash-p05</a></div>`,
+<div class="info-row"><span class="info-label yellow">GitHub</span><a href="https://github.com/avinash-p05" target="_blank">github.com/avinash-p05</a></div>
+<div class="info-row"><span class="info-label yellow">LinkedIn</span><a href="https://linkedin.com/in/Avinash-Pauskar" target="_blank">linkedin.com/in/Avinash-Pauskar</a></div>`,
 
   all: () => {
     return [
@@ -637,7 +665,7 @@ const COMMANDS = {
     const years = now.getFullYear() - start.getFullYear();
     const days = Math.floor((now - start) / (1000*60*60*24));
     return `<span class="muted"> up ${days} days (${years}+ years in tech),  1 user,  load average: 0.42, 0.69, 0.88</span>
-<span class="muted"> Currently: Software Engineer Intern @ Esko</span>`;
+<span class="muted"> Currently: Software Engineer Trainee @ Esko</span>`;
   },
 
   date: () => {
@@ -874,7 +902,7 @@ function processCommand(raw) {
 
   // git log
   if (cmd === 'git log') {
-    appendHTML(`<span class="yellow">commit a1b2c3d</span> <span class="muted">(HEAD -> main, origin/main)</span>\nAuthor: Avinash Pauskar <avinashpauskar05@gmail.com>\nDate:   Feb 2025\n\n    <span class="text">feat: Started as SWE Intern @ Esko</span>\n\n<span class="yellow">commit e4f5g6h</span>\nAuthor: Avinash Pauskar\nDate:   Sept 2024\n\n    <span class="text">feat: Frontend dev at Theta Dynamics (Hirehack)</span>\n\n<span class="yellow">commit i7j8k9l</span>\nAuthor: Avinash Pauskar\nDate:   2024\n\n    <span class="text">feat: Built AURA & Avalanche fest websites</span>\n\n<span class="yellow">commit m0n1o2p</span>\nAuthor: Avinash Pauskar\nDate:   2021\n\n    <span class="text">init: Started B.E. in Computer Science @ GIT</span>`);
+    appendHTML(`<span class="yellow">commit a1b2c3d</span> <span class="muted">(HEAD -> main, origin/main)</span>\nAuthor: Avinash Pauskar <avinashpauskar05@gmail.com>\nDate:   Feb 2025\n\n    <span class="text">feat: Started as SWE Trainee @ Esko</span>\n\n<span class="yellow">commit e4f5g6h</span>\nAuthor: Avinash Pauskar\nDate:   Sept 2024\n\n    <span class="text">feat: Frontend dev at Theta Dynamics (Hirehack)</span>\n\n<span class="yellow">commit i7j8k9l</span>\nAuthor: Avinash Pauskar\nDate:   2024\n\n    <span class="text">feat: Built AURA & Avalanche fest websites</span>\n\n<span class="yellow">commit m0n1o2p</span>\nAuthor: Avinash Pauskar\nDate:   2021\n\n    <span class="text">init: Started B.E. in Computer Science @ GIT</span>`);
     appendHTML('');
     return;
   }
