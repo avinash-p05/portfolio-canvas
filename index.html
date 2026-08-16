@@ -30,7 +30,7 @@
 
     body {
       background: var(--bg);
-      background-image: url('background.png');
+      background-image: url('ubuntu.png');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -41,40 +41,84 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 1.5rem;
+      padding: 4rem 4rem 2rem 8rem;
       overflow-x: hidden;
     }
+
+    .desktop-icons {
+      position: fixed;
+      z-index: 1;
+      top: 42px;
+      left: 76px;
+      display: grid;
+      grid-template-columns: repeat(2, 104px);
+      gap: 18px 14px;
+      max-height: calc(100vh - 4rem);
+    }
+    .desktop-icon {
+      appearance: none;
+      cursor: pointer;
+      border: 1px solid transparent;
+      border-radius: 7px;
+      background: transparent;
+      color: #dce8f0;
+      font: 500 0.68rem/1.25 var(--font);
+      padding: 5px 3px;
+      text-align: center;
+      text-shadow: 0 2px 3px #000;
+    }
+    .desktop-icon:hover {
+      background: rgba(0, 229, 255, 0.14);
+      border-color: rgba(0, 229, 255, 0.45);
+    }
+    .desktop-icon::before {
+      content: '📄';
+      display: block;
+      font-size: 2.3rem;
+      line-height: 1;
+      margin-bottom: 5px;
+      filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.55));
+    }
+    .desktop-icon.folder::before { content: '📁'; }
+    .desktop-icon span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
     /* ── Scanline overlay ────────────────────────────────── */
     body::after {
       content: '';
       position: fixed;
       inset: 0;
-      background: repeating-linear-gradient(
-        0deg,
-        rgba(0, 0, 0, 0.08) 0px,
-        rgba(0, 0, 0, 0.08) 1px,
-        transparent 1px,
-        transparent 3px
-      );
+      background: none;
       pointer-events: none;
       z-index: 9999;
     }
 
+    .ubuntu-topbar { position: fixed; z-index: 5; inset: 0 0 auto; height: 30px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; background: rgba(34, 34, 34, .92); color: #fff; font: 600 .75rem system-ui, sans-serif; }
+    .topbar-section { display: flex; align-items: center; gap: 13px; }
+    .ubuntu-dock { position: fixed; z-index: 4; top: 42px; bottom: 16px; left: 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 8px 6px; border-radius: 10px; background: rgba(28, 28, 28, .73); }
+    .dock-icon { width: 38px; height: 38px; display: grid; place-items: center; cursor: pointer; border: 0; border-radius: 7px; background: transparent; color: #fff; font-size: 1.55rem; }
+    .dock-icon:hover, .dock-icon.active { background: rgba(255, 255, 255, .15); }
+    .dock-separator { width: 27px; border-top: 1px solid rgba(255, 255, 255, .26); margin: 2px 0; }
+
     /* ── Terminal Window ─────────────────────────────────── */
     #terminal-window {
-      width: 100%;
-      max-width: 880px;
-      background: rgba(17, 24, 34, 0.92);
+      position: relative;
+      z-index: 2;
+      width: min(1120px, calc(100vw - 13rem));
+      max-width: none;
+      background: #2d2d2d;
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: 7px;
       overflow: hidden;
       box-shadow:
-        0 0 40px rgba(57, 255, 20, 0.06),
-        0 20px 60px rgba(0, 0, 0, 0.5);
+        0 12px 34px rgba(0, 0, 0, 0.58);
+      transition: width .2s ease, height .2s ease, transform .2s ease, opacity .2s ease;
     }
+    #terminal-window.maximized { position: fixed; inset: 30px 0 0 70px; width: auto; height: calc(100vh - 30px); border-radius: 0; }
+    #terminal-window.maximized #terminal { height: calc(100vh - 74px); }
+    #terminal-window.minimized { position: fixed; right: 16px; bottom: 16px; width: 260px; transform: none; opacity: .92; }
+    #terminal-window.minimized #terminal { display: none; }
 
     /* ── Title Bar ───────────────────────────────────────── */
     #title-bar {
@@ -86,6 +130,13 @@
       gap: 8px;
       user-select: none;
     }
+
+    #title-bar { padding: 7px 10px; background: linear-gradient(#464646, #373737); gap: 6px; }
+    .window-controls { display: flex; gap: 3px; }
+    .window-control { width: 19px; height: 19px; display: grid; place-items: center; cursor: pointer; border: 0; border-radius: 50%; color: #333; font: 700 .8rem system-ui, sans-serif; }
+    .control-minimize { background: #f6c344; }
+    .control-maximize { background: #64c466; }
+    .control-close { background: #ef6b62; }
 
     .traffic-light {
       width: 12px;
@@ -99,7 +150,7 @@
     #title-bar span {
       flex: 1;
       text-align: center;
-      color: var(--muted);
+      color: #e9e9e9;
       font-size: 0.8rem;
       letter-spacing: 1px;
     }
@@ -107,7 +158,7 @@
     /* ── Terminal Body ───────────────────────────────────── */
     #terminal {
       padding: 1.2rem 1.4rem;
-      height: 75vh;
+      height: min(72vh, 760px);
       overflow-y: auto;
       scroll-behavior: smooth;
       line-height: 1.7;
@@ -178,6 +229,36 @@
       font-size: 0.92rem;
       caret-color: var(--accent);
       margin-left: 4px;
+    }
+
+    .quick-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0.8rem 0 0.25rem;
+    }
+    .quick-command {
+      appearance: none;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: rgba(0, 229, 255, 0.06);
+      color: var(--accent2);
+      font: 500 0.78rem var(--font);
+      padding: 5px 8px;
+    }
+    .quick-command:hover { border-color: var(--accent2); color: var(--accent); }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
 
     /* ── Typing effect cursor ────────────────────────────── */
@@ -340,14 +421,18 @@
 
     /* ── Responsive ──────────────────────────────────────── */
     @media (max-width: 900px) {
-      body { padding: 1rem; }
+      body { padding: 3rem 1rem 1rem 6rem; }
       #terminal-window { border-radius: 8px; }
+      #terminal-window { width: calc(100vw - 7rem); }
+      .desktop-icons { left: 72px; top: 42px; grid-template-columns: repeat(2, 92px); gap: 10px; opacity: 0.88; }
+      .desktop-icon { font-size: 0.58rem; }
+      .desktop-icon::before { font-size: 1.7rem; }
     }
 
     @media (max-width: 600px) {
       html { font-size: 13px; }
       body {
-        padding: 0.5rem;
+        padding: 2.8rem 0.5rem 0.5rem;
         background-attachment: scroll; /* fixed breaks on iOS */
         background-position: center top;
       }
@@ -356,6 +441,11 @@
         max-width: 100%;
       }
       #terminal { padding: 0.8rem; height: 85vh; }
+      .desktop-icons { display: none; }
+      .ubuntu-dock { display: none; }
+      .ubuntu-topbar { height: 28px; }
+      #terminal-window { width: 100%; }
+      #terminal-window.maximized { inset: 28px 0 0; }
       .info-label { min-width: 110px; }
       .ascii-art { font-size: 0.55rem; }
       .neofetch-container { flex-direction: column; gap: 8px; }
@@ -368,25 +458,69 @@
       #terminal { padding: 0.6rem; height: 88vh; }
       .info-label { min-width: 90px; }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; scroll-behavior: auto !important; }
+    }
   </style>
 </head>
 <body>
 
-<div id="terminal-window">
+<header class="ubuntu-topbar" aria-label="Ubuntu system bar">
+  <div class="topbar-section"><span>Activities</span><span>▣ Terminal</span></div>
+  <strong>Avinash's Portfolio</strong>
+  <div class="topbar-section"><span id="desktop-clock"></span><span>◔ ◉ ▾</span></div>
+</header>
+<aside class="ubuntu-dock" aria-label="Application dock">
+  <button class="dock-icon" type="button" title="Firefox">🦊</button>
+  <button class="dock-icon" type="button" title="Files">🗂️</button>
+  <button class="dock-icon active" id="dock-terminal" type="button" title="Terminal">▣</button>
+  <button class="dock-icon" type="button" title="Software">🛍️</button>
+  <span class="dock-separator"></span>
+  <button class="dock-icon" type="button" title="Show applications">⠿</button>
+</aside>
+
+<nav class="desktop-icons" aria-label="Portfolio desktop files">
+  <button class="desktop-icon folder" type="button" data-command="cat about.txt"><span>about.txt</span></button>
+  <button class="desktop-icon folder" type="button" data-command="cat education.md"><span>education.md</span></button>
+  <button class="desktop-icon folder" type="button" data-command="cat experience.json"><span>experience.json</span></button>
+  <button class="desktop-icon folder" type="button" data-command="projects"><span>projects</span></button>
+  <button class="desktop-icon folder" type="button" data-command="cat skills.yaml"><span>skills.yaml</span></button>
+  <button class="desktop-icon folder" type="button" data-command="cat achievements.log"><span>achievements.log</span></button>
+  <button class="desktop-icon folder" type="button" data-command="cat contact.conf"><span>contact.conf</span></button>
+  <button class="desktop-icon folder" type="button" data-command="cat social.links"><span>social.links</span></button>
+  <button class="desktop-icon" type="button" data-command="cat readme.md"><span>README.md</span></button>
+  <button class="desktop-icon" type="button" data-command="wget resume"><span>resume.pdf</span></button>
+  <button class="desktop-icon" type="button" data-command="cat .gitconfig"><span>.gitconfig</span></button>
+  <button class="desktop-icon" type="button" data-command="cat package.json"><span>package.json</span></button>
+</nav>
+
+<main id="terminal-window" aria-label="Avinash Pauskar portfolio terminal">
   <div id="title-bar">
-    <div class="traffic-light tl-red"></div>
-    <div class="traffic-light tl-yellow"></div>
-    <div class="traffic-light tl-green"></div>
     <span>avinash@portfolio:~</span>
-  </div>
-  <div id="terminal">
-    <div id="output"></div>
-    <div id="input-line">
-      <span class="prompt-prefix">visitor@avinash:~$&nbsp;</span>
-      <input id="cmd-input" type="text" autofocus autocomplete="off" spellcheck="false" />
+    <div class="window-controls" aria-label="Window controls">
+      <button class="window-control control-minimize" id="minimize-window" type="button" aria-label="Minimize terminal">−</button>
+      <button class="window-control control-maximize" id="maximize-window" type="button" aria-label="Maximize terminal">□</button>
+      <button class="window-control control-close" id="close-window" type="button" aria-label="Close terminal">×</button>
     </div>
   </div>
-</div>
+  <div id="terminal" role="region" aria-label="Terminal output" tabindex="-1">
+    <div id="output" aria-live="polite" aria-relevant="additions"></div>
+    <div class="quick-actions" aria-label="Portfolio shortcuts">
+      <button class="quick-command" type="button" data-command="about">About</button>
+      <button class="quick-command" type="button" data-command="projects">Projects</button>
+      <button class="quick-command" type="button" data-command="experience">Experience</button>
+      <button class="quick-command" type="button" data-command="contact">Contact</button>
+      <button class="quick-command" type="button" data-command="wget resume">Resume ↓</button>
+    </div>
+    <div id="input-line">
+      <span class="prompt-prefix">visitor@avinash:~$&nbsp;</span>
+      <label class="sr-only" for="cmd-input">Enter a portfolio command</label>
+      <input id="cmd-input" type="text" autofocus autocomplete="off" spellcheck="false" aria-describedby="terminal-help" />
+    </div>
+    <span id="terminal-help" class="sr-only">Type help to view commands. Use the quick action buttons to open key portfolio sections.</span>
+  </div>
+</main>
 
 <script>
 // ═══════════════════════════════════════════════════════════
@@ -396,6 +530,11 @@
 const output   = document.getElementById('output');
 const input    = document.getElementById('cmd-input');
 const terminal = document.getElementById('terminal');
+const terminalWindow = document.getElementById('terminal-window');
+const minimizeButton = document.getElementById('minimize-window');
+const maximizeButton = document.getElementById('maximize-window');
+const closeButton = document.getElementById('close-window');
+const dockTerminal = document.getElementById('dock-terminal');
 let commandHistory = [];
 let historyIndex = -1;
 
@@ -414,7 +553,8 @@ const WELCOME = `${BANNER}
   <span class="bold highlight">Welcome to Avinash Pauskar's Terminal Portfolio</span>
   <span class="muted">Computer Science Engineer | Full-Stack Developer | Cloud Enthusiast</span>
 
-  Type <span class="accent2 bold">help</span> to see available commands.
+  <span class="yellow bold">Start here:</span> <span class="accent2">about</span> → <span class="accent2">projects</span> → <span class="accent2">contact</span>
+  <span class="muted">Or use the shortcut buttons below. Type </span><span class="accent2 bold">help</span><span class="muted"> to explore everything.</span>
 </div>`;
 
 // ── Fortune Quotes ────────────────────────────────────────
@@ -526,7 +666,7 @@ const COMMANDS = {
 <div class="exp-card">
   <span class="bold purple">Theta Dynamics Pvt. Ltd.</span> — Frontend Developer  <span class="muted">Sept 2024 – Jan 2025</span>
   <span class="muted">Belagavi, Karnataka</span>
-  Built and integrated the frontend for <a href="https://hirehack.io" target="_blank">Hirehack</a>,
+  Built and integrated the frontend for <a href="https://hirehack.io" target="_blank" rel="noopener noreferrer">Hirehack</a>,
   an AI-powered interview preparation platform, ensuring
   seamless API communication and a responsive, user-friendly interface.
 </div>`,
@@ -536,24 +676,23 @@ const COMMANDS = {
 
 <div class="project-card">
   <span class="bold accent2">AURA Website</span>  <span class="muted">[ React.js · Kotlin · Jetpack Compose ]</span>
-  Developed the official website for AURA, the largest cultural
-  fest in college, using React.js to showcase event details &
-  enable external student registrations. Also built mobile apps
-  using Jetpack Compose & Kotlin for entry/exit/attendance marking,
-  along with an Admin Dashboard for event statistics.
+  <span class="yellow">Impact:</span> Built the digital experience for the college's largest cultural fest.
+  <span class="yellow">Ownership:</span> Developed the React.js event site for discovery and external registrations;
+  also delivered Kotlin + Jetpack Compose apps for entry, exit, and attendance.
+  <span class="yellow">Operations:</span> Added an admin dashboard so organizers could track event statistics.
 </div>
 <div class="project-card">
   <span class="bold accent2">Avalanche Website</span>  <span class="muted">[ React.js · Node.js · Express · MongoDB ]</span>
-  Developed "Avalanche" college fest website with a "Pixel Parade"
-  theme. Features event displays, registrations, QR-based payments,
-  and a secure Node.js + Express backend with MongoDB.
+  <span class="yellow">Impact:</span> Created a complete online flow for a college fest with a distinct “Pixel Parade” theme.
+  <span class="yellow">Capabilities:</span> Event discovery, registrations, QR-based payments, and a secure
+  Node.js + Express backend backed by MongoDB.
 </div>
 <div class="project-card">
   <span class="bold accent2">Bulk Certificate Generator</span>  <span class="muted">[ Spring Boot · MongoDB · SMTP ]</span>
-  Automates certificate distribution for the Avalanche event.
-  Upload a CSV of participant details, select a template, and
-  personalized certificates are generated & sent via SMTP email.
-  MongoDB stores templates and participant metadata.
+  <span class="yellow">Impact:</span> Reduced manual certificate-distribution work for the Avalanche event.
+  <span class="yellow">Workflow:</span> Organizers upload a participant CSV and choose a template; the system
+  generates personalized certificates and sends them by SMTP email.
+  <span class="yellow">Architecture:</span> Spring Boot application with MongoDB for templates and participant metadata.
 </div>`,
 
   skills: () => `
@@ -763,8 +902,11 @@ function scrollToBottom() {
 }
 
 function processCommand(raw) {
-  const cmd = raw.trim().toLowerCase();
+  let cmd = raw.trim().toLowerCase();
   if (!cmd) return;
+
+  const aliases = { project: 'projects', work: 'experience', resume: 'wget resume', linkedin: 'social' };
+  cmd = aliases[cmd] || cmd;
 
   // Echo the command
   appendHTML(`<span class="prompt-prefix">visitor@avinash:~$</span> <span class="cmd-text">${escapeHTML(raw)}</span>`);
@@ -775,6 +917,7 @@ function processCommand(raw) {
 
   if (cmd === 'clear') {
     output.innerHTML = '';
+    appendHTML(WELCOME);
     return;
   }
 
@@ -971,8 +1114,65 @@ input.addEventListener('keydown', (e) => {
 // Click anywhere to focus input
 terminal.addEventListener('click', () => input.focus());
 
+function restoreTerminal() {
+  terminalWindow.hidden = false;
+  terminalWindow.classList.remove('minimized');
+  dockTerminal.classList.add('active');
+  input.focus();
+}
+
+minimizeButton.addEventListener('click', () => {
+  terminalWindow.classList.remove('maximized');
+  terminalWindow.classList.add('minimized');
+});
+
+maximizeButton.addEventListener('click', () => {
+  restoreTerminal();
+  terminalWindow.classList.toggle('maximized');
+  maximizeButton.textContent = terminalWindow.classList.contains('maximized') ? '❐' : '□';
+});
+
+closeButton.addEventListener('click', () => {
+  terminalWindow.hidden = true;
+  dockTerminal.classList.remove('active');
+});
+
+dockTerminal.addEventListener('click', () => {
+  if (terminalWindow.hidden || terminalWindow.classList.contains('minimized')) restoreTerminal();
+  else minimizeButton.click();
+});
+
+function updateDesktopClock() {
+  document.getElementById('desktop-clock').textContent = new Intl.DateTimeFormat([], { weekday: 'short', hour: '2-digit', minute: '2-digit' }).format(new Date());
+}
+updateDesktopClock();
+setInterval(updateDesktopClock, 30000);
+
+document.querySelector('.quick-actions').addEventListener('click', (event) => {
+  const button = event.target.closest('[data-command]');
+  if (!button || input.disabled) return;
+  processCommand(button.dataset.command);
+  input.focus();
+});
+
+document.querySelector('.desktop-icons').addEventListener('click', (event) => {
+  const icon = event.target.closest('[data-command]');
+  if (!icon || input.disabled) return;
+  restoreTerminal();
+  processCommand(icon.dataset.command);
+  input.focus();
+});
+
+document.querySelector('.ubuntu-dock').addEventListener('click', (event) => {
+  const app = event.target.closest('.dock-icon');
+  if (!app || app === dockTerminal || input.disabled) return;
+  restoreTerminal();
+  processCommand(`sudo launch ${app.title || 'application'}`);
+});
+
 // ── Boot Sequence ─────────────────────────────────────────
 function boot() {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const lines = [
     { text: '<span class="muted">[system] Initializing terminal...</span>', delay: 0 },
     { text: '<span class="muted">[system] Loading portfolio data...</span>', delay: 400 },
@@ -990,7 +1190,7 @@ function boot() {
         input.disabled = false;
         input.focus();
       }
-    }, delay);
+    }, reduceMotion ? 0 : delay);
   });
 }
 
