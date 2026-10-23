@@ -4,7 +4,7 @@ A single-page portfolio built with plain HTML, CSS and JavaScript. There's no fr
 
 ## Live
 
-**[avinash-pauskar-portfolio.netlify.app](https://avinash-pauskar-portfolio.netlify.app)**
+**[avinash-pauskar.netlify.app](https://avinash-pauskar.netlify.app)**
 
 ## What's in it
 
