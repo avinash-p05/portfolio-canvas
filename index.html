@@ -170,6 +170,26 @@
     #guide .bubble .row .btn { padding: 7px 12px; font-size: 13px; }
     #guide .bubble .count { margin-left: auto; font: 11px var(--mono); color: var(--faint); }
 
+    #guide .tag em { font-style: normal; font-weight: 500; opacity: .85; }
+    #guide .tag em:not(:empty)::before { content: ' · '; }
+    #guide .chat { position: absolute; left: 18px; top: 44px; width: max-content; max-width: 250px; background: var(--accent); color: #fff; padding: 8px 12px; border-radius: 4px 12px 12px 12px; font-size: 13px; line-height: 1.45; box-shadow: var(--shadow-lift); opacity: 0; transform: translateY(4px) scale(.96); transform-origin: 0 0; transition: opacity .25s, transform .25s; }
+    #guide .chat.on { opacity: 1; transform: none; }
+
+    /* AP working on the board */
+    .status.typing #status-text::after { content: ''; display: inline-block; width: 1.5px; height: 1.05em; background: var(--accent); margin-left: 2px; vertical-align: -2px; animation: caret 1s steps(1) infinite; }
+    @keyframes caret { 50% { opacity: 0; } }
+    .ap-select { position: absolute; border: 1.5px solid var(--accent); border-radius: 8px; pointer-events: none; opacity: 0; transition: opacity .25s; z-index: 50; }
+    .ap-select.on { opacity: 1; }
+    .ap-select::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: var(--accent-soft); }
+    .ap-select::after { content: attr(data-label); position: absolute; left: -1.5px; top: -21px; background: var(--accent); color: #fff; font: 600 11px var(--sans); padding: 2px 7px; border-radius: 5px 5px 5px 0; white-space: nowrap; }
+    #ink { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; z-index: 50; }
+    #ink path { fill: none; stroke: var(--accent); stroke-width: 2.6; stroke-linecap: round; transition: stroke-dashoffset 1s ease, opacity .6s; }
+    .item.ap-moving { transition: left .9s cubic-bezier(.3, .7, .3, 1), top .9s cubic-bezier(.3, .7, .3, 1), transform .2s, box-shadow .2s; }
+    .item.history-move { transition: left .35s ease, top .35s ease, transform .2s; }
+    .tb:disabled { opacity: .35; cursor: default; background: none; }
+    .chrome { touch-action: none; }
+    .chrome.toolbar { touch-action: pan-x; }
+
     .toast { position: fixed; top: 70px; left: 50%; transform: translate(-50%, -8px); z-index: 30; padding: 9px 15px; border-radius: 10px; background: var(--text); color: var(--paper); font: 13px var(--mono); opacity: 0; transition: all .25s; pointer-events: none; }
     .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
@@ -183,7 +203,7 @@
     .page-view .wins-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
     .page-view .wins-grid .item { margin: 0; }
     .page-view .sticky { width: auto; }
-    .page-view #arrows, .page-view .note, .page-view .minimap, .page-view #guide, .page-view .hint, .page-view [data-canvas-only] { display: none !important; }
+    .page-view #ink, .page-view .ap-select, .page-view #arrows, .page-view .note, .page-view .minimap, .page-view #guide, .page-view .hint, .page-view [data-canvas-only] { display: none !important; }
     .page-view .postcard { grid-template-columns: 1fr; }
     .page-view .postcard .divider { display: none; }
     .page-view .drag { cursor: auto; }
@@ -205,12 +225,14 @@
 <main id="board" aria-label="Portfolio canvas">
   <div id="world">
     <svg id="arrows" width="1" height="1" aria-hidden="true"></svg>
+    <svg id="ink" width="1" height="1" aria-hidden="true"></svg>
+    <div class="ap-select" id="ap-select" data-label="Avinash" aria-hidden="true"></div>
 
     <!-- ===== intro ===== -->
     <section class="zone" data-zone="intro" aria-label="Introduction">
       <div class="note" data-x="-300" data-y="-262" style="transform: rotate(-4deg)">✦ start here</div>
       <article class="item card intro" data-x="-300" data-y="-210" data-w="600">
-        <span class="status">Open to full-time roles</span>
+        <span class="status"><span id="status-text">Open to full-time roles</span></span>
         <h1>Hi, I'm Avinash.<br/>I build <span>full-stack</span> products, from UI to database.</h1>
         <p>I'm a software engineer from <b>Belagavi, India</b>. I work across <b>Java, Spring Boot, Node.js and React</b>, and lately on <b>AI features</b> such as RAG and LLM-powered tools. I've won <b>7 hackathons</b> and finished my degree with a <b>9.02 CGPA</b>.</p>
         <div class="hello-tags"><span>Full-stack</span><span>Java & Spring</span><span>React</span><span>AI / RAG</span><span>Android</span><span>Hackathons</span></div>
@@ -437,6 +459,8 @@
   <button class="tb" id="zoom-out" aria-label="Zoom out" data-canvas-only>−</button>
   <span id="zoom-label" data-canvas-only>100%</span>
   <button class="tb" id="zoom-in" aria-label="Zoom in" data-canvas-only>+</button>
+  <button class="tb" id="undo" title="Undo move (Ctrl+Z)" aria-label="Undo" data-canvas-only><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
+  <button class="tb" id="redo" title="Redo move (Ctrl+Shift+Z)" aria-label="Redo" data-canvas-only><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
   <button class="tb" id="fit" title="Fit everything (0)" data-canvas-only><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
   <span class="sep"></span>
   <button class="tb" id="tour-btn" data-canvas-only>▶ Tour</button>
@@ -448,8 +472,9 @@
 
 <div id="guide" class="hidden" aria-live="polite">
   <svg viewBox="0 0 24 24"><path d="M4 2l16 9-7 2-3.5 7z" fill="#5b5bf7" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
-  <span class="tag">Avinash</span>
-  <div class="bubble" id="bubble">
+  <span class="tag">Avinash<em id="guide-doing"></em></span>
+  <div class="chat" id="chat"></div>
+  <div class="bubble" id="bubble" hidden>
     <div id="bubble-text"></div>
     <div class="row" id="bubble-actions"></div>
   </div>
@@ -575,8 +600,42 @@
 
   // ---------- input: pan, pinch, drag ----------
   const pointers = new Map();
-  let mode = null, maxZ = 1;
+  let mode = null, maxZ = 1, lastInput = 0;
   const bringToFront = el => { maxZ++; el.style.zIndex = maxZ; };
+  const posOf = el => ({ x: parseFloat(el.style.left), y: parseFloat(el.style.top) });
+
+  // ---------- undo / redo (moves of cards and notes) ----------
+  const undoStack = [], redoStack = [];
+  const nameOf = el => (el.querySelector('h3, .what')?.textContent || 'item').trim();
+  const syncHistoryButtons = () => { $('#undo').disabled = !undoStack.length; $('#redo').disabled = !redoStack.length; };
+  const placeAt = (el, p) => {
+    el.classList.add('history-move'); bringToFront(el);
+    el.style.left = p.x + 'px'; el.style.top = p.y + 'px';
+    setTimeout(() => el.classList.remove('history-move'), 400);
+    queueMinimap();
+  };
+  function recordMove(el, from) {
+    const to = posOf(el);
+    if (Math.hypot(to.x - from.x, to.y - from.y) < 2) return;
+    undoStack.push({ el, from, to }); redoStack.length = 0;
+    if (undoStack.length > 100) undoStack.shift();
+    syncHistoryButtons();
+  }
+  const undo = () => {
+    const m = undoStack.pop();
+    if (!m) { toast('Nothing to undo'); return; }
+    placeAt(m.el, m.from); redoStack.push(m); syncHistoryButtons();
+    toast(`Undo · moved ${nameOf(m.el)}`);
+  };
+  const redo = () => {
+    const m = redoStack.pop();
+    if (!m) { toast('Nothing to redo'); return; }
+    placeAt(m.el, m.to); undoStack.push(m); syncHistoryButtons();
+    toast(`Redo · moved ${nameOf(m.el)}`);
+  };
+  $('#undo').addEventListener('click', undo);
+  $('#redo').addEventListener('click', redo);
+  syncHistoryButtons();
 
   board.addEventListener('pointerdown', e => {
     if (pageView || e.button > 0) return;
@@ -584,12 +643,16 @@
     // a drag on the canvas pans or moves things; it should never start a text selection
     e.preventDefault();
     getSelection()?.removeAllRanges();
-    stopFlight();
+    stopFlight(); lastInput = performance.now();
     pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
     board.setPointerCapture(e.pointerId);
     if (pointers.size === 1) {
       const item = e.target.closest('.drag');
-      if (item) { mode = { type: 'item', el: item }; item.classList.add('lifted'); bringToFront(item); }
+      if (item) {
+        item.classList.remove('ap-moving');
+        mode = { type: 'item', el: item, from: posOf(item) };
+        item.classList.add('lifted'); bringToFront(item);
+      }
       else { mode = { type: 'pan' }; board.classList.add('grabbing'); }
     } else if (pointers.size === 2) {
       mode?.el?.classList.remove('lifted');
@@ -618,18 +681,30 @@
   });
   const endPointer = e => {
     pointers.delete(e.pointerId);
-    if (pointers.size === 0) { mode?.el?.classList.remove('lifted'); mode = null; board.classList.remove('grabbing'); }
+    if (pointers.size === 0) {
+      if (mode?.type === 'item') recordMove(mode.el, mode.from);
+      mode?.el?.classList.remove('lifted'); mode = null; board.classList.remove('grabbing');
+    }
     else if (pointers.size === 1 && mode?.type === 'pinch') mode = { type: 'pan' };
   };
   board.addEventListener('pointerup', endPointer);
   board.addEventListener('pointercancel', endPointer);
 
-  board.addEventListener('wheel', e => {
+  // listen on the whole window: ctrl + scroll (and trackpad pinch, which arrives as ctrl + wheel)
+  // over the toolbar or minimap would otherwise zoom the browser instead of the canvas
+  addEventListener('wheel', e => {
     if (pageView) return;
-    e.preventDefault(); stopFlight();
-    if (e.ctrlKey || e.metaKey) zoomAt(e.clientX, e.clientY, cam.z * Math.exp(-e.deltaY * 0.01));
+    const zooming = e.ctrlKey || e.metaKey;
+    if (!zooming && e.target.closest?.('.toolbar')) return;
+    e.preventDefault(); stopFlight(); lastInput = performance.now();
+    if (zooming) zoomAt(e.clientX, e.clientY, cam.z * Math.exp(-e.deltaY * 0.01));
     else { cam.x -= e.deltaX; cam.y -= e.deltaY; apply(); }
   }, { passive: false });
+  // Safari pinch fires gesture events instead of ctrl + wheel
+  let gestureZ = 1;
+  addEventListener('gesturestart', e => { if (pageView) return; e.preventDefault(); gestureZ = cam.z; }, { passive: false });
+  addEventListener('gesturechange', e => { if (pageView) return; e.preventDefault(); zoomAt(e.clientX || innerWidth / 2, e.clientY || innerHeight / 2, gestureZ * e.scale); }, { passive: false });
+  addEventListener('gestureend', e => { if (!pageView) e.preventDefault(); }, { passive: false });
 
   const zoomCenter = f => zoomAt(innerWidth / 2, innerHeight / 2, cam.z * f);
   $('#zoom-in').addEventListener('click', () => zoomCenter(1.25));
@@ -638,7 +713,10 @@
 
   addEventListener('keydown', e => {
     if (pageView || e.target.closest?.('input, textarea')) return;
-    const k = e.key;
+    const k = e.key, mod = e.ctrlKey || e.metaKey;
+    lastInput = performance.now();
+    if (mod && k.toLowerCase() === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); return; }
+    if (mod && k.toLowerCase() === 'y') { e.preventDefault(); redo(); return; }
     if (k === '+' || k === '=') zoomCenter(1.2);
     else if (k === '-' || k === '_') zoomCenter(1 / 1.2);
     else if (k === '0') flyTo(camFor(allRect(), 40));
@@ -722,7 +800,10 @@
     });
     bubble.hidden = false;
   };
-  const hideGuide = () => { guide.classList.add('hidden'); touring = false; $('#tour-btn').classList.remove('on'); };
+  const hideGuide = () => {
+    bubble.hidden = true; touring = false; $('#tour-btn').classList.remove('on');
+    if (!startAmbient()) guide.classList.add('hidden');
+  };
 
   const steps = [
     { zone: 'work', at: [560, -430], text: 'From Feb 2025 to Sep 2026 I was at <b>Esko</b>, shipping backend services and an AI tool that builds workflows from plain English.' },
@@ -747,6 +828,7 @@
   const startTour = () => {
     if (pageView) return;
     touring = true; guide.classList.remove('hidden'); $('#tour-btn').classList.add('on');
+    doing(''); $('#chat').classList.remove('on'); $('#ap-select').classList.remove('on');
     store.set('toured', '1');
     runStep(0);
   };
@@ -759,6 +841,165 @@
       ['I\'ll explore', hideGuide],
     ]);
   };
+
+  // ---------- AP at work: the cursor keeps editing the board like a live collaborator ----------
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const doing = label => { $('#guide-doing').textContent = label; };
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+  const worldRectOf = el => {
+    const r = el.getBoundingClientRect();
+    return { x: (r.left - cam.x) / cam.z, y: (r.top - cam.y) / cam.z, w: r.width / cam.z, h: r.height / cam.z };
+  };
+  const inView = el => {
+    if (cam.z < 0.3) return false;
+    const r = el.getBoundingClientRect();
+    return r.left > 30 && r.right < innerWidth - 30 && r.top > 80 && r.bottom < innerHeight - 100;
+  };
+  const canAct = () => ambientOn && !touring && !pageView && bubble.hidden && !mode;
+  const moveGuide = (wx, wy, dur = 900) => new Promise(res => {
+    const from = { ...guidePos }, t0 = performance.now();
+    let done = false;
+    const finish = () => { if (done) return; done = true; res(); };
+    const step = now => {
+      if (done) return;
+      if (touring) { finish(); return; }
+      const p = Math.min((now - t0) / dur, 1), e = ease(p);
+      guidePos.x = from.x + (wx - from.x) * e; guidePos.y = from.y + (wy - from.y) * e;
+      placeGuide();
+      if (p < 1) requestAnimationFrame(step); else finish();
+    };
+    requestAnimationFrame(step);
+    setTimeout(() => { if (!done && !touring) { guidePos.x = wx; guidePos.y = wy; placeGuide(); } finish(); }, dur + 250);
+  });
+
+  const statusLines = ['Open to full-time roles', 'Shipping something new', 'Learning AWS right now', 'Reviewing a pull request', 'Open to full-time roles'];
+  let statusIdx = 0;
+  const notes = {
+    'FinCore': 'Load-tested at ~1,000 payments/s with zero overdrafts 💸',
+    'DevMind': 'Ask it why prod broke: it searches docs, code and logs',
+    'FlowForge': 'Need more throughput? Just add workers.',
+    'Secure Eventify': 'Jetpack Compose + ML Kit for the QR scanning',
+    'Avalanche 2024': 'Ran registrations for our college tech fest',
+    'Global Time Zone': 'A C++ CLI on top of the TimeZoneDB API 🕰️',
+    'Esko Graphics': 'The AI Flow Builder won a Top Honorable Mention 🏅',
+  };
+
+  const actions = {
+    async retype() {
+      const el = $('.status');
+      if (!inView(el)) return false;
+      const r = worldRectOf(el);
+      await moveGuide(r.x + r.w - 4, r.y + r.h * 0.6);
+      if (!canAct()) return true;
+      doing('editing'); el.classList.add('typing');
+      const t = $('#status-text');
+      while (t.textContent.length) { t.textContent = t.textContent.slice(0, -1); await sleep(28); }
+      statusIdx = (statusIdx + 1) % statusLines.length;
+      for (const ch of statusLines[statusIdx]) { t.textContent += ch; await sleep(55 + Math.random() * 70); }
+      await sleep(700);
+      el.classList.remove('typing'); doing('');
+      return true;
+    },
+    async nudge() {
+      const notesInView = $$('.sticky').filter(inView);
+      if (!notesInView.length) return false;
+      const el = pick(notesInView), r = worldRectOf(el);
+      await moveGuide(r.x + r.w * 0.5, r.y + 26);
+      if (!canAct()) return true;
+      doing('moving'); bringToFront(el);
+      el.classList.add('lifted', 'ap-moving');
+      const cur = posOf(el), home = { x: +el.dataset.x, y: +el.dataset.y };
+      // drift around, but keep notes near where they started unless the visitor moved them away
+      const far = Math.hypot(cur.x - home.x, cur.y - home.y) > 140;
+      const dx = far ? (Math.random() * 2 - 1) * 20 : Math.max(-60, Math.min(60, home.x - cur.x + (Math.random() * 2 - 1) * 45));
+      const dy = far ? (Math.random() * 2 - 1) * 16 : Math.max(-50, Math.min(50, home.y - cur.y + (Math.random() * 2 - 1) * 35));
+      el.style.left = cur.x + dx + 'px'; el.style.top = cur.y + dy + 'px';
+      await moveGuide(guidePos.x + dx, guidePos.y + dy, 900);
+      el.classList.remove('lifted'); queueMinimap();
+      await sleep(250); el.classList.remove('ap-moving'); doing('');
+      return true;
+    },
+    async select() {
+      const chips = $$('.stack .tags span, .hello-tags span, .chips span').filter(inView);
+      if (!chips.length) return false;
+      const el = pick(chips), r = worldRectOf(el);
+      await moveGuide(r.x + r.w - 6, r.y + r.h - 4);
+      if (!canAct()) return true;
+      doing('selecting');
+      const sel = $('#ap-select');
+      Object.assign(sel.style, { left: r.x - 4 + 'px', top: r.y - 4 + 'px', width: r.w + 8 + 'px', height: r.h + 8 + 'px' });
+      sel.classList.add('on');
+      await sleep(1900);
+      sel.classList.remove('on'); doing('');
+      return true;
+    },
+    async comment() {
+      const cards = $$('.project, .xp').filter(inView);
+      if (!cards.length) return false;
+      const el = pick(cards), text = notes[el.querySelector('h3')?.textContent.trim()];
+      if (!text) return false;
+      const r = worldRectOf(el);
+      await moveGuide(r.x + r.w * 0.62, r.y + r.h * 0.3);
+      if (!canAct()) return true;
+      doing('commenting');
+      const chat = $('#chat'); chat.textContent = text; chat.classList.add('on');
+      await sleep(3200);
+      chat.classList.remove('on'); doing('');
+      return true;
+    },
+    async circle() {
+      const targets = $$('.edu .big, .metric-row div, .sticky .place, .xp .when').filter(inView);
+      if (!targets.length) return false;
+      const el = pick(targets), r = worldRectOf(el);
+      const cx = r.x + r.w / 2, cy = r.y + r.h / 2, rx = r.w / 2 + 16, ry = r.h / 2 + 12;
+      const pts = Array.from({ length: 15 }, (_, i) => {
+        const a = -Math.PI * 0.9 + (i / 13) * Math.PI * 2, wob = 1 + (Math.random() - 0.5) * 0.08;
+        return [cx + Math.cos(a) * rx * wob, cy + Math.sin(a) * ry * wob];
+      });
+      await moveGuide(pts[0][0], pts[0][1]);
+      if (!canAct()) return true;
+      doing('drawing');
+      const ink = $('#ink'), path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', 'M' + pts.map(p => p.map(n => n.toFixed(1)).join(' ')).join(' L'));
+      ink.appendChild(path);
+      const len = path.getTotalLength();
+      path.style.strokeDasharray = len; path.style.strokeDashoffset = len;
+      path.getBoundingClientRect();
+      path.style.strokeDashoffset = 0;
+      for (const p of pts.slice(1)) await moveGuide(p[0], p[1], 70);
+      doing('');
+      setTimeout(() => { path.style.opacity = 0; setTimeout(() => path.remove(), 700); }, 2600);
+      return true;
+    },
+  };
+
+  let ambientOn = false;
+  const idleWander = async () => {
+    const s = safe();
+    const wx = (s.w * (0.3 + Math.random() * 0.4) - cam.x) / cam.z;
+    const wy = (s.top + s.h * (0.3 + Math.random() * 0.4) - cam.y) / cam.z;
+    await moveGuide(wx, wy, 1400);
+  };
+  async function ambientLoop() {
+    const order = ['retype', 'comment', 'nudge', 'select', 'circle'];
+    let i = 0;
+    while (ambientOn) {
+      await sleep(1800 + Math.random() * 2200);
+      if (!canAct() || document.hidden) continue;
+      guide.classList.remove('hidden');
+      let acted = false;
+      for (let tries = 0; tries < order.length && !acted; tries++) {
+        acted = await actions[order[i++ % order.length]]();
+      }
+      if (!acted && canAct()) await idleWander();
+    }
+  }
+  function startAmbient() {
+    if (reduced) return false;
+    guide.classList.remove('hidden');
+    if (!ambientOn) { ambientOn = true; ambientLoop(); }
+    return true;
+  }
 
   // ---------- page view ----------
   const narrow = () => innerWidth < 700;
@@ -789,7 +1030,10 @@
     if (saved === 'page' || (!saved && narrow())) { setPageView(true, false); return; }
     const all = camFor(allRect(), 40);
     setCenter(all.cx, all.cy, all.z); apply();
-    setTimeout(() => flyTo(introView(), 1400).then(() => { if (!store.get('toured')) setTimeout(greet, 300); }), 500);
+    setTimeout(() => flyTo(introView(), 1400).then(() => {
+      if (!store.get('toured')) setTimeout(greet, 300);
+      else startAmbient();
+    }), 500);
   };
   (document.fonts?.ready || Promise.resolve()).then(start);
 })();
