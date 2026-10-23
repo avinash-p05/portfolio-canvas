@@ -1,0 +1,78 @@
+/* Page view: the same content as a normal scrolling page (and the default on phones). */
+
+.page-view body {
+  overflow: auto;
+}
+
+.page-view .board {
+  position: static;
+  overflow: visible;
+  cursor: auto;
+  touch-action: auto;
+  user-select: text;
+  -webkit-user-select: text;
+  background-attachment: fixed;
+  padding: 90px 16px 120px;
+}
+
+.page-view .world {
+  position: static;
+  transform: none !important;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.page-view .zone {
+  display: block;
+  margin-bottom: 56px;
+}
+
+.page-view .item {
+  position: static;
+  transform: none;
+  width: auto !important;
+  margin-bottom: 16px;
+}
+
+.page-view .zone-label {
+  display: block;
+  margin-bottom: 20px;
+}
+
+.page-view .wins-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 14px;
+}
+
+.page-view .wins-grid .item {
+  margin: 0;
+}
+
+.page-view .sticky {
+  width: auto;
+}
+
+.page-view .postcard {
+  grid-template-columns: 1fr;
+}
+
+.page-view .postcard .divider {
+  display: none;
+}
+
+.page-view .locked {
+  cursor: auto;
+}
+
+.page-view .follow-frame,
+.page-view .snack,
+.page-view .ink,
+.page-view .ap-select,
+.page-view .arrows,
+.page-view .note,
+.page-view .minimap,
+.page-view .guide,
+.page-view .hint {
+  display: none !important;
+}

@@ -1,0 +1,356 @@
+/* Fixed UI around the canvas: header, toolbar, minimap and notices. */
+
+.chrome {
+  position: fixed;
+  z-index: 20;
+  background: var(--chrome);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  border-radius: 12px;
+  touch-action: none;
+}
+
+/* ---------- header ---------- */
+
+.file {
+  top: 14px;
+  left: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px 8px 10px;
+  font-size: 13.5px;
+}
+
+.file .logo {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: var(--accent);
+  display: grid;
+  place-items: center;
+}
+
+.file b {
+  font: 700 15px var(--display);
+  letter-spacing: -0.02em;
+}
+
+.file span {
+  color: var(--faint);
+}
+
+.presence {
+  top: 14px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 6px 6px 12px;
+}
+
+.presence .btn {
+  padding: 7px 12px;
+  font-size: 13px;
+}
+
+.avatars {
+  display: flex;
+  padding-left: 6px;
+}
+
+.av {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font: 600 11px var(--sans);
+  color: #fff;
+  background: var(--c);
+  border: 2px solid var(--card);
+  margin-left: -6px;
+  padding: 0;
+  cursor: default;
+  transition:
+    transform 0.15s,
+    box-shadow 0.25s;
+}
+
+button.av {
+  cursor: pointer;
+}
+
+button.av:hover {
+  transform: translateY(-1px);
+}
+
+.av .online {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--success);
+  border: 2px solid var(--card);
+}
+
+.av.active,
+.av.following {
+  box-shadow:
+    0 0 0 2px var(--card),
+    0 0 0 4px var(--c);
+}
+
+.av[data-tip]:hover::after {
+  content: attr(data-tip);
+  position: absolute;
+  top: 38px;
+  right: -8px;
+  white-space: nowrap;
+  background: var(--text);
+  color: var(--paper);
+  font: 500 12px var(--sans);
+  padding: 6px 9px;
+  border-radius: 7px;
+  pointer-events: none;
+  z-index: 40;
+}
+
+.role-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: 500 12.5px var(--sans);
+  color: var(--muted);
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.role-pill svg {
+  width: 14px;
+  height: 14px;
+}
+
+.request-btn.requested {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: transparent;
+}
+
+/* ---------- toolbar ---------- */
+
+.toolbar {
+  left: 50%;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 5px;
+  max-width: calc(100vw - 24px);
+  overflow-x: auto;
+  scrollbar-width: none;
+  touch-action: pan-x;
+}
+
+.toolbar::-webkit-scrollbar {
+  display: none;
+}
+
+.tb {
+  border: 0;
+  background: none;
+  padding: 8px 11px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tb:hover {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.tb.on {
+  background: var(--accent);
+  color: #fff;
+}
+
+.tb svg {
+  width: 16px;
+  height: 16px;
+}
+
+.sep {
+  width: 1px;
+  height: 22px;
+  background: var(--line);
+  margin: 0 4px;
+  flex: none;
+}
+
+.zoom-label {
+  font: 12px var(--mono);
+  min-width: 46px;
+  text-align: center;
+  color: var(--muted);
+}
+
+/* ---------- minimap and hint ---------- */
+
+.minimap {
+  right: 14px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  padding: 6px;
+  cursor: pointer;
+}
+
+.minimap canvas {
+  display: block;
+  width: 180px;
+  height: 116px;
+  border-radius: 7px;
+}
+
+.hint {
+  position: fixed;
+  left: 18px;
+  top: 66px;
+  z-index: 20;
+  font: 12px var(--mono);
+  color: var(--faint);
+  pointer-events: none;
+}
+
+/* ---------- notices ---------- */
+
+.toast {
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  transform: translate(-50%, -8px);
+  z-index: 30;
+  padding: 9px 15px;
+  border-radius: 10px;
+  background: var(--text);
+  color: var(--paper);
+  font: 13px var(--mono);
+  opacity: 0;
+  transition: all 0.25s;
+  pointer-events: none;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.snack {
+  position: fixed;
+  left: 50%;
+  bottom: calc(76px + env(safe-area-inset-bottom));
+  transform: translate(-50%, 10px);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 8px 8px 16px;
+  border-radius: 12px;
+  background: var(--text);
+  color: var(--paper);
+  font-size: 13.5px;
+  box-shadow: var(--shadow-lift);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.25s,
+    transform 0.25s;
+  width: max-content;
+  max-width: calc(100vw - 24px);
+}
+
+.snack.on {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+
+.snack .btn {
+  padding: 6px 12px;
+  font-size: 13px;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  white-space: nowrap;
+}
+
+/* ---------- following the owner ---------- */
+
+.follow-frame {
+  position: fixed;
+  inset: 0;
+  z-index: 14;
+  pointer-events: none;
+  border: 3px solid var(--accent);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.following .follow-frame {
+  opacity: 1;
+}
+
+.follow-bar {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 6px 6px 12px;
+  background: var(--accent);
+  color: #fff;
+  font: 600 12.5px var(--sans);
+  border-radius: 0 0 10px 10px;
+  white-space: nowrap;
+}
+
+.follow-bar button {
+  border: 0;
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+  font: 600 12px var(--sans);
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+@media (max-width: 760px) {
+  .file span,
+  .file b,
+  .role-pill,
+  .presence .resume-btn,
+  .minimap,
+  .hint {
+    display: none;
+  }
+
+  .file {
+    padding: 6px 12px 6px 6px;
+  }
+}

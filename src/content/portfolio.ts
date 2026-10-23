@@ -1,0 +1,400 @@
+import type { Portfolio } from './types';
+
+export const portfolio: Portfolio = {
+  person: {
+    name: 'Avinash Pauskar',
+    initials: 'AP',
+    role: 'Full-Stack Engineer',
+    email: 'avinashpauskar05@gmail.com',
+    resumeUrl: '/Avinash_Pauskar_Resume.pdf',
+    links: [
+      { label: 'linkedin / avinash-pauskar', url: 'https://linkedin.com/in/avinash-pauskar' },
+      { label: 'github / avinash-p05', url: 'https://github.com/avinash-p05' },
+    ],
+  },
+
+  labels: {
+    work: { x: 540, y: -470, title: 'Work', subtitle: "where I've shipped" },
+    projects: { x: -640, y: 300, title: "Things I've built", subtitle: "open a card's links to dive in" },
+    wins: { x: -1500, y: -470, title: 'Hackathons', subtitle: '7 finishes, 2 wins' },
+    stack: { x: -440, y: -930, title: 'Toolbox', subtitle: 'what I reach for, front to back' },
+    learning: { x: 1100, y: -130, title: 'Learning', subtitle: 'school & certs' },
+    contact: { x: 620, y: 300, title: 'Say hi', subtitle: "the postcard is real, the stamp isn't" },
+  },
+
+  intro: {
+    x: -300,
+    y: -210,
+    w: 600,
+    status: 'Open to full-time roles',
+    headline: {
+      before: "Hi, I'm Avinash.\nI build ",
+      highlight: 'full-stack',
+      after: ' products, from UI to database.',
+    },
+    body:
+      "I'm a software engineer from **Belagavi, India**. I work across **Java, Spring Boot, Node.js and React**, " +
+      'and lately on **AI features** such as RAG and LLM-powered tools. ' +
+      "I've won **7 hackathons** and finished my degree with a **9.02 CGPA**.",
+    tags: ['Full-stack', 'Java & Spring', 'React', 'AI / RAG', 'Android', 'Hackathons'],
+  },
+  startHere: { x: -300, y: -262, r: -4, text: '✦ start here' },
+
+  experience: [
+    {
+      x: 540,
+      y: -380,
+      w: 500,
+      company: 'Esko Graphics',
+      role: 'Software Engineer I · joined as an intern, converted to full-time',
+      period: 'Feb 2025 – Sep 2026',
+      bullets: [
+        'Built backend services, REST APIs and workflow execution for **Enfocus Switch**, a production workflow-automation platform, using Node.js, TypeScript, MongoDB and SQL.',
+        'Worked on an **AI Flow Builder** that turns plain-English requirements into runnable workflows, using LLM element selection, context retrieval and deterministic validation.',
+        'Integrated an **AI assistant** into Switch with JWT signing and an in-memory token cache that refreshes before expiry.',
+        'Worked on **isolated script execution** using child processes, IPC and executor pools.',
+      ],
+      metrics: [
+        { value: '6 h → 25 min', label: 'to build a workflow with AI' },
+        { value: '34 / 40+', label: 'QA requirements produced valid workflows' },
+      ],
+      note: 'The AI Flow Builder won a Top Honorable Mention 🏅',
+    },
+  ],
+  highlight: {
+    id: 'honorable-mention',
+    x: 1080,
+    y: -400,
+    r: 4,
+    color: 'purple',
+    place: '🏅 Top Honorable Mention',
+    title: 'Esko Innovation Day, for the AI Flow Builder',
+    detail: '2026',
+  },
+
+  projects: [
+    {
+      id: 'fincore',
+      x: -640,
+      y: 390,
+      w: 370,
+      name: 'FinCore',
+      kind: 'fintech · java',
+      description:
+        'A payment system with a double-entry ledger and a React operations dashboard. In load tests it handled about 1,000 payments/s at 87 ms p95 with no duplicates and no overdrafts.',
+      stack: ['Java 21', 'Spring Boot', 'PostgreSQL', 'Kafka', 'React'],
+      links: [
+        { label: 'live', url: 'https://avinash-p05.github.io/fin-core/' },
+        { label: 'code', url: 'https://github.com/avinash-p05/fin-core' },
+      ],
+      art: 'pipeline',
+      gradient: ['#e9f7d8', '#c8ecb1'],
+      ink: '#2f5d1e',
+      note: 'Load-tested at ~1,000 payments/s with zero overdrafts 💸',
+    },
+    {
+      id: 'devmind',
+      x: -240,
+      y: 390,
+      w: 370,
+      r: -1,
+      name: 'DevMind',
+      kind: 'ai · rag',
+      description:
+        'An incident-intelligence assistant that answers engineering questions from docs, code, logs and incident reports. It combines pgvector search, full-text search and reranking, orchestrated with LangGraph.',
+      stack: ['Python', 'RAG', 'pgvector', 'LangGraph', 'TypeScript'],
+      links: [
+        { label: 'architecture', url: 'https://avinash-p05.github.io/devmind/devmind-architecture.html' },
+        { label: 'code', url: 'https://github.com/avinash-p05/devmind' },
+      ],
+      art: 'retrieval',
+      gradient: ['#e3e6ff', '#c9cdfc'],
+      ink: '#3b3fb3',
+      note: 'Ask it why prod broke: it searches docs, code and logs',
+    },
+    {
+      id: 'flowforge',
+      x: 160,
+      y: 390,
+      w: 370,
+      r: 1,
+      name: 'FlowForge',
+      kind: 'distributed · typescript',
+      description:
+        'A distributed workflow engine. You define workflows through a REST API, executions are queued, and horizontally scalable workers run the jobs.',
+      stack: ['TypeScript', 'REST', 'Queues', 'Docker'],
+      links: [
+        {
+          label: 'architecture',
+          url: 'https://avinash-p05.github.io/flow-forge/flowforge-architecture.html',
+        },
+        { label: 'code', url: 'https://github.com/avinash-p05/flow-forge' },
+      ],
+      art: 'workers',
+      gradient: ['#ffecd6', '#ffd4a8'],
+      ink: '#8a4b10',
+      note: 'Need more throughput? Just add workers.',
+    },
+    {
+      id: 'secure-eventify',
+      x: -640,
+      y: 850,
+      w: 370,
+      r: 1,
+      name: 'Secure Eventify',
+      kind: 'android · kotlin',
+      description:
+        'An Android app that event staff use to scan QR codes, mark attendance and track ID cards, with token login and role-based access.',
+      stack: ['Kotlin', 'Jetpack Compose', 'Hilt', 'ML Kit'],
+      links: [{ label: 'code', url: 'https://github.com/avinash-p05/Aura-25-Apps' }],
+      art: 'qr',
+      gradient: ['#e0f4f5', '#b8e3e6'],
+      ink: '#155e63',
+      note: 'Jetpack Compose + ML Kit for the QR scanning',
+    },
+    {
+      id: 'avalanche',
+      x: -240,
+      y: 850,
+      w: 370,
+      name: 'Avalanche 2024',
+      kind: 'backend · node',
+      description:
+        "The backend for KLS GIT's technical fest: auth, team registration, paper submissions, payment tracking and admin analytics.",
+      stack: ['Node.js', 'Express', 'MongoDB', 'JWT'],
+      links: [{ label: 'code', url: 'https://github.com/avinash-p05/Avalanche-2024' }],
+      art: 'peaks',
+      gradient: ['#fde2ec', '#f9c2d6'],
+      ink: '#8c1d4a',
+      note: 'Ran registrations for our college tech fest',
+    },
+    {
+      id: 'global-time-zone',
+      x: 160,
+      y: 850,
+      w: 370,
+      r: -1,
+      name: 'Global Time Zone',
+      kind: 'cli · c++',
+      description:
+        'A C++ command-line tool for world time zones. It converts times with DST support, searches zones by region and saves favourites.',
+      stack: ['C++', 'REST client', 'CMake'],
+      links: [{ label: 'code', url: 'https://github.com/avinash-p05/Global-Time-Zone' }],
+      art: 'globe',
+      gradient: ['#eeeef0', '#d7d7dd'],
+      ink: '#3b3b45',
+      note: 'A C++ CLI on top of the TimeZoneDB API 🕰️',
+    },
+  ],
+
+  wins: [
+    {
+      id: 'pyhack',
+      x: -1500,
+      y: -370,
+      r: -3,
+      color: 'yellow',
+      place: '🥇 1st',
+      title: 'PyHack',
+      detail: 'BelPy Python Community',
+    },
+    {
+      id: 'hack-to-future',
+      x: -1270,
+      y: -380,
+      r: 2,
+      color: 'green',
+      place: '🥇 1st',
+      title: 'Hack-to-Future',
+      detail: '2025',
+    },
+    {
+      id: 'sih',
+      x: -1040,
+      y: -366,
+      r: -1,
+      color: 'pink',
+      place: '🇮🇳 Finalist',
+      title: 'Smart India Hackathon',
+      detail: 'National Finale',
+    },
+    {
+      id: 'wave',
+      x: -1490,
+      y: -160,
+      r: 2,
+      color: 'blue',
+      place: '🥈 2nd',
+      title: 'Wave 2.0',
+      detail: 'BEC Bagalkot',
+    },
+    {
+      id: 'aura',
+      x: -1260,
+      y: -150,
+      r: -2,
+      color: 'purple',
+      place: '🥈 2nd',
+      title: 'Aura-2025 Digital Entry System',
+      detail: 'KLS GIT',
+    },
+    {
+      id: 'idea-bazaar',
+      x: -1030,
+      y: -158,
+      r: 3,
+      color: 'yellow',
+      place: '🥉 Runner-up',
+      title: 'Idea Bazaar',
+      detail: 'TCE Gadag',
+    },
+    {
+      id: 'odyssey',
+      x: -1270,
+      y: 64,
+      r: -2,
+      color: 'green',
+      place: '🥉 Runner-up',
+      title: 'Odyssey Hackathon',
+      detail: '',
+    },
+  ],
+
+  skills: [
+    {
+      x: -440,
+      y: -840,
+      w: 280,
+      r: -1,
+      groups: [
+        {
+          title: 'Frontend & mobile',
+          skills: ['React', 'Vite', 'TypeScript', 'HTML/CSS', 'Kotlin', 'Jetpack Compose'],
+        },
+        { title: 'Languages', skills: ['Java', 'TypeScript', 'SQL', 'Python', 'C++'] },
+      ],
+    },
+    {
+      x: -140,
+      y: -850,
+      w: 280,
+      groups: [
+        { title: 'Backend', skills: ['Spring Boot', 'Node.js', 'Express', 'REST', 'JWT'] },
+        { title: 'Data', skills: ['PostgreSQL', 'MongoDB', 'Redis', 'Kafka'] },
+      ],
+    },
+    {
+      x: 160,
+      y: -840,
+      w: 280,
+      r: 1,
+      groups: [
+        { title: 'AI', skills: ['RAG', 'Embeddings', 'LLM APIs', 'LangGraph'] },
+        { title: 'Ship & test', skills: ['Docker', 'AWS', 'CI/CD', 'JUnit', 'Mockito', 'Git'] },
+      ],
+    },
+  ],
+
+  education: {
+    x: 1100,
+    y: -40,
+    w: 340,
+    degree: 'B.E. Computer Science',
+    period: '2021 – 2025',
+    score: '9.02',
+    scoreLabel: '/ 10 CGPA',
+    school: 'KLS Gogte Institute of Technology, Belagavi',
+  },
+  certifications: {
+    x: 1100,
+    y: 170,
+    w: 340,
+    r: 1,
+    items: [
+      { name: 'Generative AI basics', issuer: 'IBM' },
+      { name: 'Amazon Web Services', issuer: "O'Reilly" },
+      { name: 'Design Patterns & SOLID', issuer: 'Udemy' },
+      { name: 'Java DSA', issuer: 'Udemy' },
+    ],
+  },
+
+  contact: {
+    x: 620,
+    y: 390,
+    w: 460,
+    r: -1.5,
+    message: "Building something interesting? I'd love to hear about it.",
+    detail: 'Open to full-time software engineering roles and fun side projects.',
+  },
+
+  annotations: [
+    { x: 330, y: -330, r: -6, text: 'where I worked' },
+    { x: 40, y: 250, r: 3, text: "stuff I've built" },
+    { x: -760, y: -300, r: 5, text: '7 hackathon wins!' },
+    { x: 20, y: -420, r: -3, text: 'my toolbox' },
+    { x: 420, y: 250, r: -4, text: 'say hi →' },
+  ],
+  arrows: [
+    [
+      [300, -150],
+      [450, -300],
+      [530, -380],
+    ],
+    [
+      [0, 175],
+      [-30, 260],
+      [-60, 380],
+    ],
+    [
+      [-310, -110],
+      [-560, -200],
+      [-800, -250],
+    ],
+    [
+      [0, -215],
+      [-20, -420],
+      [0, -580],
+    ],
+    [
+      [260, 175],
+      [420, 300],
+      [600, 420],
+    ],
+  ],
+
+  greeting:
+    "Hey 👋 I'm Avinash. This portfolio is a canvas: **drag** to look around, or I can show you around.",
+  tour: [
+    {
+      zone: 'work',
+      at: [560, -430],
+      text: 'From Feb 2025 to Sep 2026 I was at **Esko**, shipping backend services and an AI tool that builds workflows from plain English.',
+    },
+    {
+      zone: 'projects',
+      at: [-620, 350],
+      text: "Some things I've built: **payments, RAG search, a workflow engine, an Android app** and more. Cards link to live demos and code.",
+    },
+    {
+      zone: 'wins',
+      at: [-1480, -430],
+      text: 'Seven hackathon finishes, including two 1st places and an SIH national finale.',
+    },
+    {
+      zone: 'stack',
+      at: [-420, -890],
+      text: 'My toolbox: **React and Kotlin** up front, **Spring and Node** in the middle, **Postgres and Kafka** underneath, plus AI on top.',
+    },
+    {
+      zone: 'contact',
+      at: [640, 350],
+      text: "That's the tour! The canvas is yours now. Or say hi: I reply to every email.",
+    },
+  ],
+  statusLines: [
+    'Open to full-time roles',
+    'Shipping something new',
+    'Learning AWS right now',
+    'Reviewing a pull request',
+  ],
+};

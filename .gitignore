@@ -1,18 +1,24 @@
+# Dependencies and build output
+node_modules/
+dist/
+
 # Netlify
 .netlify/
+
+# Environment
+.env
+.env.*
 
 # OS
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# IDE
+# Editors
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# Misc
-node_modules/
-.env
+# Logs
 *.log
