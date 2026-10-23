@@ -8,11 +8,14 @@ A single-page portfolio built with plain HTML, CSS and JavaScript. There's no fr
 
 ## What's in it
 
-- **Live topology hero.** An animated canvas of a payment system where requests flow from the gateway to payments, the ledger, Kafka and the services after it. Some are deduped or rejected along the way.
-- **Payment playground.** An in-browser model of how FinCore handles money. Visitors can retry a payment with the same idempotency key, try to overdraw, or fire 50 concurrent payments, and watch the double-entry ledger stay balanced.
-- **Command palette.** Press `Ctrl K` (or `⌘ K` on a Mac) to jump to sections, run playground actions, copy the email address or open links.
-- Animated impact metrics, experience, featured and pinned projects, hackathon wins, skills, education and certifications.
-- Responsive down to phone widths, and it respects `prefers-reduced-motion`.
+The portfolio is an **infinite canvas**, like a Figma or Miro board.
+
+- **Pan, zoom and pinch** around a board with zones for the intro, work, projects, hackathon wins, tech stack, learning and contact. Hand-drawn arrows connect the zones.
+- **Guided tour.** An "Avinash" multiplayer-style cursor greets first-time visitors and can fly them through each zone with short notes.
+- **Drag things around.** Project cards and hackathon sticky notes can be picked up and moved.
+- **Figma-style chrome**: a toolbar that jumps to each zone, zoom controls, fit-to-screen, a minimap and a light/dark toggle.
+- **Page view.** One click turns the canvas into a normal scrolling page, for recruiters and screen readers. Phones open in page view by default.
+- Keyboard: `+`/`-` to zoom, `0` to fit everything, arrow keys to pan. It respects `prefers-reduced-motion`.
 
 ## Run locally
 
