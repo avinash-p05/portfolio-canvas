@@ -3,1199 +3,865 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Avinash Pauskar | Terminal Portfolio</title>
+  <title>Avinash Pauskar · Java Full-Stack Engineer</title>
+  <meta name="description" content="Avinash Pauskar is a Java full-stack engineer who builds payment systems, event-driven backends and LLM-powered workflow tools." />
+  <meta property="og:title" content="Avinash Pauskar · Java Full-Stack Engineer" />
+  <meta property="og:description" content="Backends that keep the money correct. Try the live payment playground." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230a0b0d'/><circle cx='16' cy='16' r='5' fill='%23c8f560'/></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
-    /* ── Reset & Base ────────────────────────────────────── */
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
     :root {
-      --bg:        #0a0e14;
-      --surface:   #111822;
-      --border:    #1e2a3a;
-      --text:      #c5cdd9;
-      --accent:    #39ff14;
-      --accent2:   #00e5ff;
-      --yellow:    #ffcc00;
-      --orange:    #ff9f43;
-      --pink:      #ff6b81;
-      --purple:    #c678dd;
-      --muted:     #5c6773;
-      --prompt:    #39ff14;
-      --font:      'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+      --bg: #0a0b0d;
+      --panel: #111317;
+      --panel-2: #161920;
+      --line: #22262e;
+      --text: #e8eaed;
+      --muted: #8a919c;
+      --faint: #5b616b;
+      --accent: #c8f560;
+      --accent-dim: rgba(200, 245, 96, 0.12);
+      --blue: #7aa2ff;
+      --red: #ff6b6b;
+      --amber: #ffb547;
+      --radius: 14px;
+      --mono: 'Geist Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
+      --sans: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
     }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; }
+    ::selection { background: var(--accent); color: var(--bg); }
+    .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+    .mono { font-family: var(--mono); }
+    .muted { color: var(--muted); }
 
-    html { font-size: 15px; }
+    /* nav */
+    nav { position: sticky; top: 0; z-index: 50; backdrop-filter: blur(12px); background: rgba(10, 11, 13, 0.72); border-bottom: 1px solid transparent; transition: border-color .3s; }
+    nav.scrolled { border-bottom-color: var(--line); }
+    nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: -0.01em; }
+    .logo .pulse { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 0 rgba(200,245,96,.6); animation: ping 2s infinite; }
+    @keyframes ping { 70% { box-shadow: 0 0 0 9px rgba(200,245,96,0); } 100% { box-shadow: 0 0 0 0 rgba(200,245,96,0); } }
+    .nav-links { display: flex; align-items: center; gap: 28px; font-size: 14px; color: var(--muted); }
+    .nav-links a:hover { color: var(--text); }
+    .kbd-btn { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--muted); font: 12px var(--mono); cursor: pointer; }
+    .kbd-btn:hover { color: var(--text); border-color: #333843; }
+    kbd { font: 11px var(--mono); padding: 1px 6px; border: 1px solid var(--line); border-radius: 5px; background: var(--panel-2); color: var(--muted); }
 
-    body {
-      background: var(--bg);
-      background-image: url('ubuntu.png');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
-      color: var(--text);
-      font-family: var(--font);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 4rem 4rem 2rem 8rem;
-      overflow-x: hidden;
-    }
+    /* hero */
+    .hero { padding: 72px 0 56px; }
+    .hero .wrap { display: grid; grid-template-columns: 1fr 1.08fr; gap: 48px; align-items: center; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; font: 13px var(--mono); color: var(--muted); padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); }
+    .eyebrow b { color: var(--accent); font-weight: 500; }
+    h1 { font-size: clamp(40px, 5.4vw, 64px); line-height: 1.04; letter-spacing: -0.035em; font-weight: 600; margin: 22px 0 20px; }
+    h1 em { font-style: normal; color: var(--accent); }
+    .lede { font-size: 18px; color: var(--muted); max-width: 520px; }
+    .lede strong { color: var(--text); font-weight: 500; }
+    .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 18px; border-radius: 10px; font-size: 15px; font-weight: 500; border: 1px solid var(--line); background: var(--panel); color: var(--text); cursor: pointer; transition: transform .15s, border-color .2s, background .2s; font-family: var(--sans); }
+    .btn:hover { transform: translateY(-1px); border-color: #3a404b; }
+    .btn.primary { background: var(--accent); color: #0a0b0d; border-color: var(--accent); }
+    .btn.primary:hover { background: #d6ff78; }
+    .hint { margin-top: 22px; font-size: 13px; color: var(--faint); }
 
-    .desktop-icons {
-      position: fixed;
-      z-index: 1;
-      top: 42px;
-      left: 76px;
-      display: grid;
-      grid-template-columns: repeat(2, 104px);
-      gap: 18px 14px;
-      max-height: calc(100vh - 4rem);
-    }
-    .desktop-icon {
-      appearance: none;
-      cursor: pointer;
-      border: 1px solid transparent;
-      border-radius: 7px;
-      background: transparent;
-      color: #dce8f0;
-      font: 500 0.68rem/1.25 var(--font);
-      padding: 5px 3px;
-      text-align: center;
-      text-shadow: 0 2px 3px #000;
-    }
-    .desktop-icon:hover {
-      background: rgba(0, 229, 255, 0.14);
-      border-color: rgba(0, 229, 255, 0.45);
-    }
-    .desktop-icon::before {
-      content: '📄';
-      display: block;
-      font-size: 2.3rem;
-      line-height: 1;
-      margin-bottom: 5px;
-      filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.55));
-    }
-    .desktop-icon.folder::before { content: '📁'; }
-    .desktop-icon span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .system { border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); overflow: hidden; box-shadow: 0 30px 80px -30px rgba(0,0,0,.8); }
+    .system-bar { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--line); font: 12px var(--mono); color: var(--muted); }
+    .live { display: inline-flex; align-items: center; gap: 7px; color: var(--accent); }
+    .live::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: blink 1.4s infinite; }
+    @keyframes blink { 50% { opacity: .25; } }
+    #topology { display: block; width: 100%; height: 340px; }
+    .system-foot { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); }
+    .system-foot div { padding: 12px 16px; border-right: 1px solid var(--line); }
+    .system-foot div:last-child { border-right: 0; }
+    .system-foot span { display: block; font: 11px var(--mono); color: var(--faint); text-transform: uppercase; letter-spacing: .06em; }
+    .system-foot b { font: 500 16px var(--mono); }
 
-    /* ── Scanline overlay ────────────────────────────────── */
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: none;
-      pointer-events: none;
-      z-index: 9999;
-    }
+    /* sections */
+    section { padding: 96px 0; }
+    .sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; margin-bottom: 40px; flex-wrap: wrap; }
+    .sec-label { font: 13px var(--mono); color: var(--accent); margin-bottom: 10px; }
+    h2 { font-size: clamp(30px, 3.6vw, 42px); letter-spacing: -0.03em; line-height: 1.1; font-weight: 600; }
+    .sec-head p { color: var(--muted); max-width: 420px; }
 
-    .ubuntu-topbar { position: fixed; z-index: 5; inset: 0 0 auto; height: 30px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; background: rgba(34, 34, 34, .92); color: #fff; font: 600 .75rem system-ui, sans-serif; }
-    .topbar-section { display: flex; align-items: center; gap: 13px; }
-    .ubuntu-dock { position: fixed; z-index: 4; top: 42px; bottom: 16px; left: 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 8px 6px; border-radius: 10px; background: rgba(28, 28, 28, .73); }
-    .dock-icon { width: 38px; height: 38px; display: grid; place-items: center; cursor: pointer; border: 0; border-radius: 7px; background: transparent; color: #fff; font-size: 1.55rem; }
-    .dock-icon:hover, .dock-icon.active { background: rgba(255, 255, 255, .15); }
-    .dock-separator { width: 27px; border-top: 1px solid rgba(255, 255, 255, .26); margin: 2px 0; }
+    /* metrics */
+    .metrics { display: grid; grid-template-columns: repeat(5, 1fr); border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); }
+    .metric { padding: 26px 22px; border-right: 1px solid var(--line); }
+    .metric:last-child { border-right: 0; }
+    .metric .num { font: 600 30px var(--sans); letter-spacing: -0.03em; }
+    .metric .num small { font-size: 16px; color: var(--muted); font-weight: 500; }
+    .metric p { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.45; }
 
-    /* ── Terminal Window ─────────────────────────────────── */
-    #terminal-window {
-      position: relative;
-      z-index: 2;
-      width: min(1120px, calc(100vw - 13rem));
-      max-width: none;
-      background: #2d2d2d;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      overflow: hidden;
-      box-shadow:
-        0 12px 34px rgba(0, 0, 0, 0.58);
-      transition: width .2s ease, height .2s ease, transform .2s ease, opacity .2s ease;
-    }
-    #terminal-window.maximized { position: fixed; inset: 30px 0 0 70px; width: auto; height: calc(100vh - 30px); border-radius: 0; }
-    #terminal-window.maximized #terminal { height: calc(100vh - 74px); }
-    #terminal-window.minimized { position: fixed; right: 16px; bottom: 16px; width: 260px; transform: none; opacity: .92; }
-    #terminal-window.minimized #terminal { display: none; }
+    /* playground */
+    .play { display: grid; grid-template-columns: 340px 1fr; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); overflow: hidden; }
+    .controls { padding: 24px; border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 20px; }
+    .field label { display: block; font: 12px var(--mono); color: var(--faint); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .06em; }
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .chip { padding: 8px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel-2); color: var(--muted); font: 13px var(--mono); cursor: pointer; }
+    .chip[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+    .key-row { display: flex; gap: 8px; }
+    .key-row code { flex: 1; padding: 9px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel-2); font: 13px var(--mono); color: var(--blue); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .icon-btn { padding: 0 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel-2); color: var(--muted); cursor: pointer; font: 12px var(--mono); }
+    .icon-btn:hover { color: var(--text); }
+    .actions { display: grid; gap: 8px; }
+    .actions .btn { justify-content: center; width: 100%; padding: 11px; font-size: 14px; }
+    .balances { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .bal { padding: 12px; border-radius: 10px; background: var(--panel-2); border: 1px solid var(--line); }
+    .bal span { font: 11px var(--mono); color: var(--faint); text-transform: uppercase; letter-spacing: .06em; }
+    .bal b { display: block; font: 600 20px var(--mono); margin-top: 2px; transition: color .3s; }
+    .bal b.flash { color: var(--accent); }
+    .invariant { font: 12px var(--mono); color: var(--accent); display: flex; align-items: center; gap: 8px; }
 
-    /* ── Title Bar ───────────────────────────────────────── */
-    #title-bar {
-      display: flex;
-      align-items: center;
-      padding: 12px 16px;
-      background: #0d1117;
-      border-bottom: 1px solid var(--border);
-      gap: 8px;
-      user-select: none;
-    }
+    .output { display: grid; grid-template-rows: auto 1fr; min-height: 470px; }
+    .tabs { display: flex; gap: 4px; padding: 10px 12px 0; border-bottom: 1px solid var(--line); }
+    .tab { padding: 8px 12px; font: 12px var(--mono); color: var(--faint); border: 0; background: none; border-bottom: 2px solid transparent; cursor: pointer; }
+    .tab[aria-selected="true"] { color: var(--text); border-bottom-color: var(--accent); }
+    .pane { padding: 16px 20px; overflow: auto; max-height: 440px; }
+    .pane[hidden] { display: none; }
+    .log-line { font: 12.5px/1.75 var(--mono); color: var(--muted); white-space: pre-wrap; word-break: break-word; animation: in .35s ease; }
+    .log-line .t { color: var(--faint); }
+    .ok { color: var(--accent); } .err { color: var(--red); } .warn { color: var(--amber); } .info { color: var(--blue); }
+    @keyframes in { from { opacity: 0; transform: translateY(4px); } }
+    table.ledger { width: 100%; border-collapse: collapse; font: 12.5px var(--mono); }
+    .ledger th { text-align: left; color: var(--faint); font-weight: 400; padding: 6px 8px; border-bottom: 1px solid var(--line); text-transform: uppercase; font-size: 11px; letter-spacing: .06em; }
+    .ledger td { padding: 7px 8px; border-bottom: 1px solid #1a1d23; color: var(--muted); animation: in .35s ease; }
+    .ledger td.dr { color: var(--red); } .ledger td.cr { color: var(--accent); }
+    .empty { color: var(--faint); font: 13px var(--mono); padding: 30px 0; text-align: center; }
 
-    #title-bar { padding: 7px 10px; background: linear-gradient(#464646, #373737); gap: 6px; }
-    .window-controls { display: flex; gap: 3px; }
-    .window-control { width: 19px; height: 19px; display: grid; place-items: center; cursor: pointer; border: 0; border-radius: 50%; color: #333; font: 700 .8rem system-ui, sans-serif; }
-    .control-minimize { background: #f6c344; }
-    .control-maximize { background: #64c466; }
-    .control-close { background: #ef6b62; }
+    /* experience */
+    .xp { display: grid; grid-template-columns: 260px 1fr; gap: 40px; border-top: 1px solid var(--line); padding-top: 32px; }
+    .xp-meta h3 { font-size: 20px; font-weight: 600; letter-spacing: -0.01em; }
+    .xp-meta p { color: var(--muted); font-size: 14px; }
+    .xp-meta .when { font: 13px var(--mono); color: var(--faint); margin-top: 8px; }
+    .xp ul { list-style: none; display: grid; gap: 16px; }
+    .xp li { position: relative; padding-left: 22px; color: var(--muted); }
+    .xp li::before { content: ''; position: absolute; left: 0; top: 10px; width: 8px; height: 8px; border-radius: 2px; background: var(--line); }
+    .xp li strong { color: var(--text); font-weight: 500; }
+    .xp li .tag { display: inline-block; font: 11px var(--mono); color: var(--accent); background: var(--accent-dim); padding: 1px 8px; border-radius: 6px; margin-left: 6px; vertical-align: 2px; }
 
-    .traffic-light {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-    }
-    .tl-red    { background: #ff5f56; }
-    .tl-yellow { background: #ffbd2e; }
-    .tl-green  { background: #27c93f; }
+    /* projects */
+    .projects { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .project { position: relative; display: flex; flex-direction: column; padding: 24px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); transition: border-color .25s, transform .25s; overflow: hidden; }
+    .project:hover { border-color: #353a45; transform: translateY(-3px); }
+    .project::after { content: ''; position: absolute; inset: 0; background: radial-gradient(400px circle at var(--mx, 50%) var(--my, 0%), rgba(200,245,96,.07), transparent 40%); opacity: 0; transition: opacity .3s; pointer-events: none; }
+    .project:hover::after { opacity: 1; }
+    .project .kind { font: 12px var(--mono); color: var(--faint); }
+    .project h3 { font-size: 22px; letter-spacing: -0.02em; margin: 8px 0 10px; font-weight: 600; }
+    .project p { color: var(--muted); font-size: 15px; flex: 1; }
+    .stack { display: flex; flex-wrap: wrap; gap: 6px; margin: 18px 0; }
+    .stack span { font: 11.5px var(--mono); color: var(--muted); padding: 3px 8px; border: 1px solid var(--line); border-radius: 6px; }
+    .links { display: flex; gap: 16px; font: 13px var(--mono); }
+    .links a { color: var(--accent); }
+    .links a:hover { text-decoration: underline; }
+    .mini { height: 92px; margin: 0 -24px 18px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--panel-2); }
+    .mini svg { width: 100%; height: 100%; }
 
-    #title-bar span {
-      flex: 1;
-      text-align: center;
-      color: #e9e9e9;
-      font-size: 0.8rem;
-      letter-spacing: 1px;
-    }
+    .more-head { font: 12px var(--mono); color: var(--faint); text-transform: uppercase; letter-spacing: .06em; margin: 40px 0 14px; }
+    .more { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .more-item { display: flex; flex-direction: column; padding: 20px; border: 1px solid var(--line); border-radius: var(--radius); transition: border-color .25s, background .25s; }
+    .more-item:hover { border-color: #353a45; background: var(--panel); }
+    .more-top { display: flex; justify-content: space-between; align-items: baseline; }
+    .more-top h4 { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+    .more-top span { color: var(--faint); transition: color .2s, transform .2s; }
+    .more-item:hover .more-top span { color: var(--accent); transform: translate(2px, -2px); }
+    .more-item p { color: var(--muted); font-size: 14px; margin-top: 8px; flex: 1; }
+    .more-item .stack { margin: 14px 0 0; }
 
-    /* ── Terminal Body ───────────────────────────────────── */
-    #terminal {
-      padding: 1.2rem 1.4rem;
-      height: min(72vh, 760px);
-      overflow-y: auto;
-      scroll-behavior: smooth;
-      line-height: 1.7;
-      font-size: 0.92rem;
-    }
+    /* wins + skills */
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); padding: 24px; }
+    .card h3 { font-size: 16px; font-weight: 600; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: baseline; }
+    .card h3 span { font: 12px var(--mono); color: var(--faint); font-weight: 400; }
+    .wins { list-style: none; }
+    .wins li { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px solid #1a1d23; font-size: 14.5px; }
+    .wins li:last-child { border-bottom: 0; }
+    .wins .place { font: 12px var(--mono); white-space: nowrap; }
+    .skill-group { margin-bottom: 16px; }
+    .skill-group:last-child { margin-bottom: 0; }
+    .skill-group h4 { font: 12px var(--mono); color: var(--faint); font-weight: 400; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .06em; }
+    .skill-group div { display: flex; flex-wrap: wrap; gap: 6px; }
+    .skill-group span { font-size: 13.5px; padding: 4px 10px; border-radius: 7px; background: var(--panel-2); border: 1px solid var(--line); }
+    .edu { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+    .edu p { color: var(--muted); font-size: 14.5px; }
+    .edu .big { font: 600 34px var(--sans); letter-spacing: -0.03em; color: var(--text); }
+    .certs { list-style: none; display: grid; gap: 8px; font-size: 14.5px; }
+    .certs li { display: flex; justify-content: space-between; gap: 12px; }
+    .certs li span:last-child { color: var(--faint); font: 12.5px var(--mono); white-space: nowrap; }
 
-    #terminal::-webkit-scrollbar { width: 6px; }
-    #terminal::-webkit-scrollbar-track { background: transparent; }
-    #terminal::-webkit-scrollbar-thumb {
-      background: var(--border);
-      border-radius: 3px;
-    }
+    /* contact */
+    .contact { text-align: center; padding: 120px 0 80px; }
+    .contact h2 { font-size: clamp(36px, 6vw, 72px); }
+    .contact .mail { display: inline-block; margin-top: 24px; font: 500 clamp(16px, 2.4vw, 22px) var(--mono); color: var(--accent); border-bottom: 1px dashed rgba(200,245,96,.4); cursor: pointer; background: none; border-top: 0; border-left: 0; border-right: 0; }
+    .socials { display: flex; justify-content: center; gap: 12px; margin-top: 36px; flex-wrap: wrap; }
+    footer { border-top: 1px solid var(--line); padding: 28px 0; font: 12px var(--mono); color: var(--faint); }
+    footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 
-    /* ── Output Sections ─────────────────────────────────── */
-    .line { white-space: pre-wrap; word-wrap: break-word; }
-    .line.blank { height: 0.5rem; }
+    /* palette */
+    .palette-bg { position: fixed; inset: 0; z-index: 100; background: rgba(5,6,8,.6); backdrop-filter: blur(4px); display: none; align-items: flex-start; justify-content: center; padding-top: 14vh; }
+    .palette-bg.open { display: flex; }
+    .palette { width: min(560px, calc(100% - 32px)); background: var(--panel); border: 1px solid #2c313a; border-radius: 14px; box-shadow: 0 40px 100px -20px rgba(0,0,0,.9); overflow: hidden; animation: pop .16s ease; }
+    @keyframes pop { from { opacity: 0; transform: scale(.97); } }
+    .palette input { width: 100%; padding: 18px 20px; background: none; border: 0; border-bottom: 1px solid var(--line); color: var(--text); font: 16px var(--sans); outline: none; }
+    .palette ul { list-style: none; max-height: 340px; overflow: auto; padding: 8px; }
+    .palette li { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 14.5px; color: var(--muted); }
+    .palette li span:last-child { font: 11px var(--mono); color: var(--faint); }
+    .palette li.active { background: var(--panel-2); color: var(--text); }
+    .palette li.active span:last-child { color: var(--accent); }
 
-    .prompt-prefix {
-      color: var(--accent);
-      font-weight: 600;
-    }
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 20px); background: var(--text); color: var(--bg); padding: 10px 16px; border-radius: 10px; font: 13px var(--mono); opacity: 0; transition: all .25s; z-index: 120; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-    .cmd-text { color: var(--accent2); }
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.in { opacity: 1; transform: none; }
 
-    .section-title {
-      color: var(--yellow);
-      font-weight: 700;
-      font-size: 1rem;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 4px;
-      margin-bottom: 6px;
-      display: inline-block;
+    @media (max-width: 960px) {
+      .hero .wrap { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .metric { border-bottom: 1px solid var(--line); }
+      .metric:nth-child(2n) { border-right: 0; }
+      .metric:last-child { grid-column: span 2; border-bottom: 0; }
+      .play { grid-template-columns: 1fr; }
+      .controls { border-right: 0; border-bottom: 1px solid var(--line); }
+      .projects, .more { grid-template-columns: 1fr; }
+      .split, .edu { grid-template-columns: 1fr; }
+      .xp { grid-template-columns: 1fr; gap: 20px; }
     }
-
-    .highlight  { color: var(--accent); }
-    .accent2    { color: var(--accent2); }
-    .yellow     { color: var(--yellow); }
-    .orange     { color: var(--orange); }
-    .pink       { color: var(--pink); }
-    .purple     { color: var(--purple); }
-    .muted      { color: var(--muted); }
-    .bold       { font-weight: 700; }
-
-    a {
-      color: var(--accent2);
-      text-decoration: none;
-      border-bottom: 1px dashed var(--accent2);
-      transition: color 0.2s;
+    @media (max-width: 640px) {
+      .wrap { padding: 0 16px; }
+      .nav-links a { display: none; }
+      .hero { padding-top: 40px; }
+      #topology { height: 260px; }
+      .system-foot { grid-template-columns: repeat(2, 1fr); }
+      .system-foot div:nth-child(2) { border-right: 0; }
+      .system-foot div:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      section { padding: 72px 0; }
     }
-    a:hover { color: var(--accent); border-color: var(--accent); }
-
-    /* ── Input Line ──────────────────────────────────────── */
-    #input-line {
-      display: flex;
-      align-items: center;
-      margin-top: 4px;
-    }
-
-    #input-line .prompt-prefix { flex-shrink: 0; }
-
-    #cmd-input {
-      flex: 1;
-      background: none;
-      border: none;
-      outline: none;
-      color: var(--accent2);
-      font-family: var(--font);
-      font-size: 0.92rem;
-      caret-color: var(--accent);
-      margin-left: 4px;
-    }
-
-    .quick-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: 0.8rem 0 0.25rem;
-    }
-    .quick-command {
-      appearance: none;
-      cursor: pointer;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      background: rgba(0, 229, 255, 0.06);
-      color: var(--accent2);
-      font: 500 0.78rem var(--font);
-      padding: 5px 8px;
-    }
-    .quick-command:hover { border-color: var(--accent2); color: var(--accent); }
-
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
-    /* ── Typing effect cursor ────────────────────────────── */
-    .typing-cursor {
-      display: inline-block;
-      width: 8px;
-      background: var(--accent);
-      animation: blink 0.8s step-end infinite;
-      margin-left: 2px;
-    }
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50%      { opacity: 0; }
-    }
-
-    /* ── ASCII Art ────────────────────────────────────────── */
-    .ascii-art {
-      color: var(--accent);
-      font-size: 0.72rem;
-      line-height: 1.25;
-      letter-spacing: 1px;
-    }
-
-    /* ── Welcome box ─────────────────────────────────────── */
-    .welcome-box {
-      border: 1px solid var(--border);
-      padding: 10px 14px;
-      border-radius: 6px;
-      margin: 8px 0;
-      background: rgba(57, 255, 20, 0.03);
-    }
-
-    /* ── Table-like layouts ───────────────────────────────── */
-    .info-row {
-      display: flex;
-      gap: 12px;
-      padding: 2px 0;
-    }
-    .info-label {
-      color: var(--yellow);
-      min-width: 160px;
-      flex-shrink: 0;
-    }
-
-    .skill-tag {
-      display: inline-block;
-      background: rgba(57, 255, 20, 0.08);
-      border: 1px solid rgba(57, 255, 20, 0.2);
-      border-radius: 4px;
-      padding: 2px 8px;
-      margin: 2px 3px;
-      font-size: 0.82rem;
-      color: var(--accent);
-    }
-
-    .skill-category {
-      color: var(--orange);
-      font-weight: 600;
-      margin-top: 6px;
-    }
-
-    .project-card {
-      border-left: 3px solid var(--accent2);
-      padding: 6px 0 6px 14px;
-      margin: 8px 0;
-    }
-
-    .exp-card {
-      border-left: 3px solid var(--purple);
-      padding: 6px 0 6px 14px;
-      margin: 8px 0;
-    }
-
-    .edu-card {
-      border-left: 3px solid var(--yellow);
-      padding: 6px 0 6px 14px;
-      margin: 8px 0;
-    }
-
-    .achievement-item {
-      padding: 2px 0;
-    }
-    .achievement-item::before {
-      content: '🏆 ';
-    }
-
-    /* ── Neofetch layout ─────────────────────────────────── */
-    .neofetch-container {
-      display: flex;
-      gap: 24px;
-      align-items: flex-start;
-    }
-    .neofetch-ascii {
-      color: var(--accent);
-      font-size: 0.65rem;
-      line-height: 1.2;
-      flex-shrink: 0;
-    }
-    .neofetch-info {
-      line-height: 1.65;
-    }
-    .neofetch-separator {
-      color: var(--border);
-    }
-    .neofetch-colors {
-      display: flex; gap: 2px; margin-top: 4px;
-    }
-    .neofetch-colors span {
-      width: 22px; height: 12px; display: inline-block; border-radius: 2px;
-    }
-
-    /* ── Tree view ────────────────────────────────────────── */
-    .tree-line {
-      color: var(--muted);
-    }
-    .tree-folder { color: var(--accent2); font-weight: 600; }
-    .tree-file   { color: var(--text); }
-
-    /* ── Top / htop table ─────────────────────────────────── */
-    .top-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.85rem;
-    }
-    .top-table th {
-      color: var(--bg);
-      background: var(--accent);
-      padding: 2px 10px;
-      text-align: left;
-      font-weight: 600;
-    }
-    .top-table td {
-      padding: 2px 10px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    /* ── Cowsay ───────────────────────────────────────────── */
-    .cowsay-box {
-      color: var(--yellow);
-    }
-    .cowsay-cow {
-      color: var(--text);
-    }
-
-    /* ── Progress bar ────────────────────────────────────── */
-    .progress-bar {
-      display: inline-block;
-      background: var(--border);
-      border-radius: 3px;
-      width: 120px;
-      height: 10px;
-      overflow: hidden;
-      vertical-align: middle;
-    }
-    .progress-fill {
-      height: 100%;
-      background: var(--accent);
-      border-radius: 3px;
-    }
-
-    /* ── Responsive ──────────────────────────────────────── */
-    @media (max-width: 900px) {
-      body { padding: 3rem 1rem 1rem 6rem; }
-      #terminal-window { border-radius: 8px; }
-      #terminal-window { width: calc(100vw - 7rem); }
-      .desktop-icons { left: 72px; top: 42px; grid-template-columns: repeat(2, 92px); gap: 10px; opacity: 0.88; }
-      .desktop-icon { font-size: 0.58rem; }
-      .desktop-icon::before { font-size: 1.7rem; }
-    }
-
-    @media (max-width: 600px) {
-      html { font-size: 13px; }
-      body {
-        padding: 2.8rem 0.5rem 0.5rem;
-        background-attachment: scroll; /* fixed breaks on iOS */
-        background-position: center top;
-      }
-      #terminal-window {
-        border-radius: 6px;
-        max-width: 100%;
-      }
-      #terminal { padding: 0.8rem; height: 85vh; }
-      .desktop-icons { display: none; }
-      .ubuntu-dock { display: none; }
-      .ubuntu-topbar { height: 28px; }
-      #terminal-window { width: 100%; }
-      #terminal-window.maximized { inset: 28px 0 0; }
-      .info-label { min-width: 110px; }
-      .ascii-art { font-size: 0.55rem; }
-      .neofetch-container { flex-direction: column; gap: 8px; }
-      .neofetch-ascii { font-size: 0.5rem; }
-    }
-
-    @media (max-width: 380px) {
-      html { font-size: 12px; }
-      body { padding: 0.25rem; }
-      #terminal { padding: 0.6rem; height: 88vh; }
-      .info-label { min-width: 90px; }
-    }
-
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation-duration: 0.01ms !important; scroll-behavior: auto !important; }
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .reveal { opacity: 1; transform: none; }
+      html { scroll-behavior: auto; }
     }
   </style>
 </head>
 <body>
 
-<header class="ubuntu-topbar" aria-label="Ubuntu system bar">
-  <div class="topbar-section"><span>Activities</span><span>▣ Terminal</span></div>
-  <strong>Avinash's Portfolio</strong>
-  <div class="topbar-section"><span id="desktop-clock"></span><span>◔ ◉ ▾</span></div>
-</header>
-<aside class="ubuntu-dock" aria-label="Application dock">
-  <button class="dock-icon" type="button" title="Firefox">🦊</button>
-  <button class="dock-icon" type="button" title="Files">🗂️</button>
-  <button class="dock-icon active" id="dock-terminal" type="button" title="Terminal">▣</button>
-  <button class="dock-icon" type="button" title="Software">🛍️</button>
-  <span class="dock-separator"></span>
-  <button class="dock-icon" type="button" title="Show applications">⠿</button>
-</aside>
-
-<nav class="desktop-icons" aria-label="Portfolio desktop files">
-  <button class="desktop-icon folder" type="button" data-command="cat about.txt"><span>about.txt</span></button>
-  <button class="desktop-icon folder" type="button" data-command="cat education.md"><span>education.md</span></button>
-  <button class="desktop-icon folder" type="button" data-command="cat experience.json"><span>experience.json</span></button>
-  <button class="desktop-icon folder" type="button" data-command="projects"><span>projects</span></button>
-  <button class="desktop-icon folder" type="button" data-command="cat skills.yaml"><span>skills.yaml</span></button>
-  <button class="desktop-icon folder" type="button" data-command="cat achievements.log"><span>achievements.log</span></button>
-  <button class="desktop-icon folder" type="button" data-command="cat contact.conf"><span>contact.conf</span></button>
-  <button class="desktop-icon folder" type="button" data-command="cat social.links"><span>social.links</span></button>
-  <button class="desktop-icon" type="button" data-command="cat readme.md"><span>README.md</span></button>
-  <button class="desktop-icon" type="button" data-command="wget resume"><span>resume.pdf</span></button>
-  <button class="desktop-icon" type="button" data-command="cat .gitconfig"><span>.gitconfig</span></button>
-  <button class="desktop-icon" type="button" data-command="cat package.json"><span>package.json</span></button>
+<nav id="nav">
+  <div class="wrap">
+    <a href="#top" class="logo"><span class="pulse"></span>avinash.pauskar</a>
+    <div class="nav-links">
+      <a href="#playground">Playground</a>
+      <a href="#experience">Experience</a>
+      <a href="#projects">Projects</a>
+      <a href="#contact">Contact</a>
+      <button class="kbd-btn" id="open-palette" aria-label="Open command palette"><span>Jump to</span><kbd id="kbd-hint">Ctrl K</kbd></button>
+    </div>
+  </div>
 </nav>
 
-<main id="terminal-window" aria-label="Avinash Pauskar portfolio terminal">
-  <div id="title-bar">
-    <span>avinash@portfolio:~</span>
-    <div class="window-controls" aria-label="Window controls">
-      <button class="window-control control-minimize" id="minimize-window" type="button" aria-label="Minimize terminal">−</button>
-      <button class="window-control control-maximize" id="maximize-window" type="button" aria-label="Maximize terminal">□</button>
-      <button class="window-control control-close" id="close-window" type="button" aria-label="Close terminal">×</button>
+<header class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow"><b>●</b> Java Full-Stack Engineer · Belagavi, India</span>
+      <h1>I build backends that keep the <em>money correct.</em></h1>
+      <p class="lede">I work with <strong>Java, Spring Boot and React</strong> on payment ledgers, event streams and LLM-powered workflow tools. Previously Software Engineer I at <strong>Esko Graphics</strong>.</p>
+      <div class="ctas">
+        <a class="btn primary" href="#playground">Try the payment playground →</a>
+        <a class="btn" href="Avinash_Pauskar_Resume.pdf" download>Résumé ↓</a>
+      </div>
+      <p class="hint">Press <kbd id="kbd-hint-2">Ctrl K</kbd> to jump anywhere.</p>
+    </div>
+
+    <div class="system reveal" aria-label="Animated diagram of a payment system">
+      <div class="system-bar"><span>fincore / topology</span><span class="live" id="event-count">0 events</span></div>
+      <canvas id="topology"></canvas>
+      <div class="system-foot">
+        <div><span>throughput</span><b>~1,000/s</b></div>
+        <div><span>p95</span><b>87 ms</b></div>
+        <div><span>errors</span><b>0</b></div>
+        <div><span>overdrafts</span><b>0</b></div>
+      </div>
     </div>
   </div>
-  <div id="terminal" role="region" aria-label="Terminal output" tabindex="-1">
-    <div id="output" aria-live="polite" aria-relevant="additions"></div>
-    <div class="quick-actions" aria-label="Portfolio shortcuts">
-      <button class="quick-command" type="button" data-command="about">About</button>
-      <button class="quick-command" type="button" data-command="projects">Projects</button>
-      <button class="quick-command" type="button" data-command="experience">Experience</button>
-      <button class="quick-command" type="button" data-command="contact">Contact</button>
-      <button class="quick-command" type="button" data-command="wget resume">Resume ↓</button>
+</header>
+
+<section style="padding-top: 24px;">
+  <div class="wrap">
+    <div class="metrics reveal">
+      <div class="metric"><div class="num" data-count="1000" data-suffix="/s">0</div><p>payments sustained in k6 load tests</p></div>
+      <div class="metric"><div class="num" data-count="211" data-suffix="K+">0</div><p>payments verified against a consistent ledger</p></div>
+      <div class="metric"><div class="num" data-count="2800" data-suffix="+">0</div><p>Kafka events/s, up from 133 after relay tuning</p></div>
+      <div class="metric"><div class="num"><span data-count="25">0</span><small> min</small></div><p>to build a workflow with AI, down from 6 hours</p></div>
+      <div class="metric"><div class="num" data-count="7">0</div><p>hackathons won</p></div>
     </div>
-    <div id="input-line">
-      <span class="prompt-prefix">visitor@avinash:~$&nbsp;</span>
-      <label class="sr-only" for="cmd-input">Enter a portfolio command</label>
-      <input id="cmd-input" type="text" autofocus autocomplete="off" spellcheck="false" aria-describedby="terminal-help" />
-    </div>
-    <span id="terminal-help" class="sr-only">Type help to view commands. Use the quick action buttons to open key portfolio sections.</span>
   </div>
-</main>
+</section>
+
+<section id="playground">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <div class="sec-label">01 / playground</div>
+        <h2>Break my ledger. You can't.</h2>
+      </div>
+      <p>This is a small in-browser model of how FinCore handles money. Retry a payment with the same idempotency key, spend more than you have, or fire 50 payments at once.</p>
+    </div>
+
+    <div class="play reveal">
+      <div class="controls">
+        <div class="field">
+          <label>Amount</label>
+          <div class="chips" id="amounts">
+            <button class="chip" aria-pressed="false" data-amt="100">₹100</button>
+            <button class="chip" aria-pressed="true" data-amt="500">₹500</button>
+            <button class="chip" aria-pressed="false" data-amt="1500">₹1,500</button>
+            <button class="chip" aria-pressed="false" data-amt="5000">₹5,000</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Idempotency-Key</label>
+          <div class="key-row"><code id="idem-key">—</code><button class="icon-btn" id="new-key" title="Generate a new key">new</button></div>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="send">Send payment</button>
+          <button class="btn" id="retry">Retry with same key</button>
+          <button class="btn" id="burst">Fire 50 × ₹100 at once</button>
+        </div>
+        <div class="balances">
+          <div class="bal"><span>customer</span><b id="bal-c">₹2,000</b></div>
+          <div class="bal"><span>merchant</span><b id="bal-m">₹0</b></div>
+        </div>
+        <div class="invariant" id="invariant">✓ debits = credits · balance ≥ 0</div>
+        <button class="icon-btn" id="reset" style="padding: 9px;">reset</button>
+      </div>
+
+      <div class="output">
+        <div class="tabs" role="tablist">
+          <button class="tab" role="tab" aria-selected="true" data-pane="log">event log</button>
+          <button class="tab" role="tab" aria-selected="false" data-pane="ledger">ledger entries</button>
+        </div>
+        <div class="pane" id="pane-log" role="tabpanel"><div class="empty">Send a payment to see the request flow.</div></div>
+        <div class="pane" id="pane-ledger" role="tabpanel" hidden>
+          <table class="ledger">
+            <thead><tr><th>txn</th><th>account</th><th>debit</th><th>credit</th></tr></thead>
+            <tbody id="ledger-body"></tbody>
+          </table>
+          <div class="empty" id="ledger-empty">No entries yet. Each payment writes two rows.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <div class="sec-label">02 / experience</div>
+        <h2>Where I've shipped.</h2>
+      </div>
+    </div>
+    <div class="xp reveal">
+      <div class="xp-meta">
+        <h3>Esko Graphics</h3>
+        <p>Software Engineer I</p>
+        <p class="when">Feb 2025 – Sep 2026</p>
+        <p class="when">Joined as an intern, converted to full-time</p>
+      </div>
+      <ul>
+        <li>Built backend services, REST APIs and workflow execution for <strong>Enfocus Switch</strong>, a production workflow automation platform, using Node.js, TypeScript, MongoDB and SQL.</li>
+        <li>Worked on an <strong>AI-powered Switch Flow Builder</strong> that turns plain-English requirements into runnable workflows. It uses LLM-based element selection, product-context retrieval, a graph-based intermediate form, deterministic validation and XML generation. Out of 40+ QA requirements it produced valid workflows for 34, cutting build time from 6 hours to 25 minutes. <span class="tag">Top Honorable Mention · Innovation Day</span></li>
+        <li>Integrated an <strong>AI assistant</strong> into Switch with JWT generation, protected private-key handling and an in-memory token cache that refreshes before expiry.</li>
+        <li>Worked on a <strong>script-execution platform</strong> that runs each script in an isolated child process, with IPC, executor pooling and process-level fault isolation.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <div class="sec-label">03 / projects</div>
+        <h2>Things I've built.</h2>
+      </div>
+      <p><a href="https://github.com/avinash-p05" target="_blank" rel="noopener" class="mono" style="color: var(--accent);">all repos on github →</a></p>
+    </div>
+    <div class="projects">
+      <article class="project reveal">
+        <div class="mini"><svg viewBox="0 0 300 92" aria-hidden="true">
+          <g font-family="Geist Mono, monospace" font-size="9" fill="#8a919c">
+            <rect x="14" y="30" width="60" height="30" rx="6" fill="none" stroke="#2c313a"/><text x="44" y="49" text-anchor="middle">api</text>
+            <rect x="120" y="30" width="60" height="30" rx="6" fill="none" stroke="#2c313a"/><text x="150" y="49" text-anchor="middle">ledger</text>
+            <rect x="226" y="30" width="60" height="30" rx="6" fill="none" stroke="#2c313a"/><text x="256" y="49" text-anchor="middle">kafka</text>
+          </g>
+          <path d="M74 45H120M180 45H226" stroke="#2c313a"/>
+          <circle r="3" fill="#c8f560"><animateMotion dur="2.4s" repeatCount="indefinite" path="M74 45H120M180 45H226"/></circle>
+        </svg></div>
+        <span class="kind">payments · ledger</span>
+        <h3>FinCore</h3>
+        <p>A payment processing system with a double-entry ledger and a React operations dashboard. Idempotency keys and row locks stop duplicates and overdrafts. A transactional outbox publishes every event to Kafka reliably.</p>
+        <div class="stack"><span>Java 21</span><span>Spring Boot</span><span>PostgreSQL</span><span>Redis</span><span>Kafka</span><span>Docker</span><span>React</span></div>
+        <div class="links"><a href="https://avinash-p05.github.io/fin-core/" target="_blank" rel="noopener">live ↗</a><a href="https://github.com/avinash-p05/fin-core" target="_blank" rel="noopener">code ↗</a></div>
+      </article>
+
+      <article class="project reveal">
+        <div class="mini"><svg viewBox="0 0 300 92" aria-hidden="true">
+          <g font-family="Geist Mono, monospace" font-size="9" fill="#8a919c">
+            <text x="20" y="49">query</text>
+            <rect x="110" y="14" width="70" height="18" rx="5" fill="none" stroke="#2c313a"/><text x="145" y="26" text-anchor="middle">docs</text>
+            <rect x="110" y="37" width="70" height="18" rx="5" fill="none" stroke="#2c313a"/><text x="145" y="49" text-anchor="middle">code</text>
+            <rect x="110" y="60" width="70" height="18" rx="5" fill="none" stroke="#2c313a"/><text x="145" y="72" text-anchor="middle">logs</text>
+            <text x="236" y="49">answer</text>
+          </g>
+          <path d="M58 45L110 23M58 45H110M58 45L110 69M180 23L232 45M180 46H232M180 69L232 45" stroke="#2c313a" fill="none"/>
+          <circle r="3" fill="#7aa2ff"><animateMotion dur="2.2s" repeatCount="indefinite" path="M58 45L110 23H180L232 45"/></circle>
+          <circle r="3" fill="#7aa2ff"><animateMotion dur="2.2s" begin=".7s" repeatCount="indefinite" path="M58 45L110 69H180L232 45"/></circle>
+        </svg></div>
+        <span class="kind">ai · retrieval</span>
+        <h3>DevMind</h3>
+        <p>An incident-intelligence platform that answers engineering questions from docs, source code, logs, deploy records and incident reports. It combines pgvector retrieval, full-text search and reranking, orchestrated with LangGraph.</p>
+        <div class="stack"><span>RAG</span><span>pgvector</span><span>PostgreSQL FTS</span><span>Redis jobs</span><span>LangGraph</span></div>
+        <div class="links"><a href="https://avinash-p05.github.io/devmind/devmind-architecture.html" target="_blank" rel="noopener">architecture ↗</a><a href="https://github.com/avinash-p05/devmind" target="_blank" rel="noopener">code ↗</a></div>
+      </article>
+
+      <article class="project reveal">
+        <div class="mini"><svg viewBox="0 0 300 92" aria-hidden="true">
+          <g font-family="Geist Mono, monospace" font-size="9" fill="#8a919c">
+            <rect x="14" y="32" width="56" height="26" rx="6" fill="none" stroke="#2c313a"/><text x="42" y="49" text-anchor="middle">queue</text>
+            <rect x="140" y="8" width="56" height="22" rx="6" fill="none" stroke="#2c313a"/><text x="168" y="23" text-anchor="middle">worker</text>
+            <rect x="140" y="35" width="56" height="22" rx="6" fill="none" stroke="#2c313a"/><text x="168" y="50" text-anchor="middle">worker</text>
+            <rect x="140" y="62" width="56" height="22" rx="6" fill="none" stroke="#2c313a"/><text x="168" y="77" text-anchor="middle">worker</text>
+            <text x="238" y="49">done</text>
+          </g>
+          <path d="M70 45L140 19M70 45H140M70 45L140 73M196 19L234 45M196 46H234M196 73L234 45" stroke="#2c313a" fill="none"/>
+          <circle r="3" fill="#ffb547"><animateMotion dur="1.8s" repeatCount="indefinite" path="M70 45L140 19H196L234 45"/></circle>
+          <circle r="3" fill="#ffb547"><animateMotion dur="1.8s" begin=".6s" repeatCount="indefinite" path="M70 45H196L234 45"/></circle>
+          <circle r="3" fill="#ffb547"><animateMotion dur="1.8s" begin="1.2s" repeatCount="indefinite" path="M70 45L140 73H196L234 45"/></circle>
+        </svg></div>
+        <span class="kind">distributed · workflows</span>
+        <h3>FlowForge</h3>
+        <p>A distributed workflow execution platform. You define workflows through a REST API, executions are queued, and horizontally scalable workers run the jobs.</p>
+        <div class="stack"><span>REST API</span><span>Job queues</span><span>Workers</span><span>Horizontal scaling</span></div>
+        <div class="links"><a href="https://avinash-p05.github.io/flow-forge/flowforge-architecture.html" target="_blank" rel="noopener">architecture ↗</a><a href="https://github.com/avinash-p05/flow-forge" target="_blank" rel="noopener">code ↗</a></div>
+      </article>
+    </div>
+
+    <div class="more-head reveal">more pinned work</div>
+    <div class="more">
+      <a class="more-item reveal" href="https://github.com/avinash-p05/Aura-25-Apps" target="_blank" rel="noopener">
+        <div class="more-top"><h4>Secure Eventify</h4><span>↗</span></div>
+        <p>An Android app for event staff to mark attendance and track ID cards by scanning QR codes, with token login and role-based access.</p>
+        <div class="stack"><span>Kotlin</span><span>Jetpack Compose</span><span>MVVM</span><span>Hilt</span><span>ML Kit</span></div>
+      </a>
+      <a class="more-item reveal" href="https://github.com/avinash-p05/Avalanche-2024" target="_blank" rel="noopener">
+        <div class="more-top"><h4>Avalanche 2024</h4><span>↗</span></div>
+        <p>The backend for KLS GIT's technical fest: user auth, team registration, paper submissions, payment tracking and admin analytics.</p>
+        <div class="stack"><span>Node.js</span><span>Express</span><span>MongoDB</span><span>JWT</span><span>Docker</span></div>
+      </a>
+      <a class="more-item reveal" href="https://github.com/avinash-p05/Global-Time-Zone" target="_blank" rel="noopener">
+        <div class="more-top"><h4>Global Time Zone</h4><span>↗</span></div>
+        <p>A C++ command-line tool for world time zones, built on the TimeZoneDB API. It converts times with DST support, searches zones by region and saves favourites.</p>
+        <div class="stack"><span>C++</span><span>REST client</span><span>CMake</span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="about" style="padding-top: 24px;">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <div class="sec-label">04 / background</div>
+        <h2>Wins, skills, schooling.</h2>
+      </div>
+    </div>
+    <div class="split">
+      <div class="card reveal">
+        <h3>Hackathons <span>7 wins</span></h3>
+        <ul class="wins">
+          <li>Smart India Hackathon, National Finale <span class="place warn">finalist</span></li>
+          <li>PyHack, BelPy Python Community <span class="place ok">1st</span></li>
+          <li>Hack-to-Future <span class="place ok">1st</span></li>
+          <li>Wave 2.0, BEC Bagalkot <span class="place info">2nd</span></li>
+          <li>Aura-2025 Digital Entry System <span class="place info">2nd</span></li>
+          <li>TCE Idea Bazaar, TCE Gadag <span class="place muted">runner-up</span></li>
+          <li>Odyssey Hackathon <span class="place muted">runner-up</span></li>
+        </ul>
+      </div>
+      <div class="card reveal">
+        <h3>Stack</h3>
+        <div class="skill-group"><h4>Languages</h4><div><span>Java</span><span>TypeScript</span><span>SQL</span><span>Kotlin</span><span>Python</span></div></div>
+        <div class="skill-group"><h4>Backend</h4><div><span>Spring Boot</span><span>Node.js</span><span>Express</span><span>REST APIs</span><span>JWT auth</span></div></div>
+        <div class="skill-group"><h4>Data & messaging</h4><div><span>PostgreSQL</span><span>MongoDB</span><span>Redis</span><span>Apache Kafka</span><span>Event-driven design</span></div></div>
+        <div class="skill-group"><h4>Frontend</h4><div><span>React</span><span>Vite</span><span>HTML</span><span>CSS</span></div></div>
+        <div class="skill-group"><h4>AI</h4><div><span>RAG</span><span>Embeddings</span><span>LLM APIs</span></div></div>
+        <div class="skill-group"><h4>Testing & ops</h4><div><span>JUnit</span><span>Mockito</span><span>Docker</span><span>AWS</span><span>CI/CD</span><span>Git</span></div></div>
+      </div>
+    </div>
+    <div class="edu">
+      <div class="card reveal">
+        <h3>Education <span>2021 – 2025</span></h3>
+        <div class="big">9.02<span class="muted" style="font-size: 18px;"> / 10 CGPA</span></div>
+        <p>B.E. Computer Science and Engineering<br/>KLS Gogte Institute of Technology, Belagavi</p>
+      </div>
+      <div class="card reveal">
+        <h3>Certifications</h3>
+        <ul class="certs">
+          <li><span>Getting Started with Generative AI</span><span>IBM SkillsBuild</span></li>
+          <li><span>Amazon Web Services</span><span>O'Reilly</span></li>
+          <li><span>Design Patterns & SOLID Principles</span><span>Udemy</span></li>
+          <li><span>Java Data Structures & Algorithms</span><span>Udemy</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="wrap reveal">
+    <div class="sec-label">05 / contact</div>
+    <h2>Let's build something<br/>that doesn't lose money.</h2>
+    <button class="mail" id="copy-mail" title="Copy email">avinashpauskar05@gmail.com</button>
+    <div class="socials">
+      <a class="btn" href="mailto:avinashpauskar05@gmail.com">Email</a>
+      <a class="btn" href="https://github.com/avinash-p05" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn" href="https://linkedin.com/in/avinash-pauskar" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="btn" href="Avinash_Pauskar_Resume.pdf" download>Résumé</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year"></span> Avinash Pauskar</span>
+    <span>hand-written HTML, CSS & JS · no frameworks</span>
+  </div>
+</footer>
+
+<div class="palette-bg" id="palette-bg" aria-hidden="true">
+  <div class="palette" role="dialog" aria-label="Command palette">
+    <input id="palette-input" placeholder="Type a command or search…" autocomplete="off" />
+    <ul id="palette-list"></ul>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
 
 <script>
-// ═══════════════════════════════════════════════════════════
-//  TERMINAL PORTFOLIO — Avinash Pauskar
-// ═══════════════════════════════════════════════════════════
-
-const output   = document.getElementById('output');
-const input    = document.getElementById('cmd-input');
-const terminal = document.getElementById('terminal');
-const terminalWindow = document.getElementById('terminal-window');
-const minimizeButton = document.getElementById('minimize-window');
-const maximizeButton = document.getElementById('maximize-window');
-const closeButton = document.getElementById('close-window');
-const dockTerminal = document.getElementById('dock-terminal');
-let commandHistory = [];
-let historyIndex = -1;
-
-// ── ASCII Banner ──────────────────────────────────────────
-const BANNER = `
-<span class="ascii-art"> █████╗ ██╗   ██╗██╗███╗   ██╗ █████╗ ███████╗██╗  ██╗
-██╔══██╗██║   ██║██║████╗  ██║██╔══██╗██╔════╝██║  ██║
-███████║██║   ██║██║██╔██╗ ██║███████║███████╗███████║
-██╔══██║╚██╗ ██╔╝██║██║╚██╗██║██╔══██║╚════██║██╔══██║
-██║  ██║ ╚████╔╝ ██║██║ ╚████║██║  ██║███████║██║  ██║
-╚═╝  ╚═╝  ╚═══╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝</span>`;
-
-const WELCOME = `${BANNER}
-
-<div class="welcome-box">
-  <span class="bold highlight">Welcome to Avinash Pauskar's Terminal Portfolio</span>
-  <span class="muted">Computer Science Engineer | Full-Stack Developer | Cloud Enthusiast</span>
-
-  <span class="yellow bold">Start here:</span> <span class="accent2">about</span> → <span class="accent2">projects</span> → <span class="accent2">contact</span>
-  <span class="muted">Or use the shortcut buttons below. Type </span><span class="accent2 bold">help</span><span class="muted"> to explore everything.</span>
-</div>`;
-
-// ── Fortune Quotes ────────────────────────────────────────
-const FORTUNES = [
-  "The best way to predict the future is to create it. — Abraham Lincoln",
-  "Code is like humor. When you have to explain it, it's bad. — Cory House",
-  "First, solve the problem. Then, write the code. — John Johnson",
-  "Simplicity is the soul of efficiency. — Austin Freeman",
-  "Any fool can write code that a computer can understand. Good programmers write code that humans can understand. — Martin Fowler",
-  "Talk is cheap. Show me the code. — Linus Torvalds",
-  "It works on my machine ¯\\_(ツ)_/¯",
-  "There are only two hard things in CS: cache invalidation and naming things.",
-  "// TODO: fix this later — every developer ever",
-  "It's not a bug, it's a feature."
-];
-
-// ── Command Definitions ───────────────────────────────────
-const COMMANDS = {
-
-  help: () => `
-<span class="section-title">⌨  Available Commands</span>
-
-<span class="skill-category">📋 Portfolio</span>
-<div class="info-row"><span class="info-label highlight">about</span><span>Who am I — a short intro</span></div>
-<div class="info-row"><span class="info-label highlight">education</span><span>Academic background</span></div>
-<div class="info-row"><span class="info-label highlight">experience</span><span>Professional experience</span></div>
-<div class="info-row"><span class="info-label highlight">projects</span><span>Featured projects</span></div>
-<div class="info-row"><span class="info-label highlight">skills</span><span>Technical skill set</span></div>
-<div class="info-row"><span class="info-label highlight">achievements</span><span>Hackathon wins & recognitions</span></div>
-<div class="info-row"><span class="info-label highlight">contact</span><span>Get in touch</span></div>
-<div class="info-row"><span class="info-label highlight">social</span><span>Social & coding profiles</span></div>
-<div class="info-row"><span class="info-label highlight">all</span><span>Display full resume</span></div>
-
-<span class="skill-category">🛠  Terminal Utilities</span>
-<div class="info-row"><span class="info-label accent2">neofetch</span><span>System info with ASCII art</span></div>
-<div class="info-row"><span class="info-label accent2">whoami</span><span>Current user identity</span></div>
-<div class="info-row"><span class="info-label accent2">hostname</span><span>Machine hostname</span></div>
-<div class="info-row"><span class="info-label accent2">uname -a</span><span>System information</span></div>
-<div class="info-row"><span class="info-label accent2">pwd</span><span>Print working directory</span></div>
-<div class="info-row"><span class="info-label accent2">ls</span><span>List directory contents</span></div>
-<div class="info-row"><span class="info-label accent2">tree</span><span>Directory tree view</span></div>
-<div class="info-row"><span class="info-label accent2">cat &lt;file&gt;</span><span>Read file contents</span></div>
-<div class="info-row"><span class="info-label accent2">date</span><span>Current date & time</span></div>
-<div class="info-row"><span class="info-label accent2">uptime</span><span>System uptime</span></div>
-<div class="info-row"><span class="info-label accent2">history</span><span>Command history</span></div>
-<div class="info-row"><span class="info-label accent2">echo &lt;msg&gt;</span><span>Print a message</span></div>
-
-<span class="skill-category">📦 Package Managers</span>
-<div class="info-row"><span class="info-label orange">pip list</span><span>Python packages (skills)</span></div>
-<div class="info-row"><span class="info-label orange">npm list</span><span>Node.js packages (skills)</span></div>
-<div class="info-row"><span class="info-label orange">apt list</span><span>Installed system packages</span></div>
-<div class="info-row"><span class="info-label orange">brew list</span><span>Homebrew packages</span></div>
-
-<span class="skill-category">🎮 Fun & Extras</span>
-<div class="info-row"><span class="info-label pink">cowsay &lt;msg&gt;</span><span>Cow says your message</span></div>
-<div class="info-row"><span class="info-label pink">fortune</span><span>Random programming wisdom</span></div>
-<div class="info-row"><span class="info-label pink">top</span><span>Running processes</span></div>
-<div class="info-row"><span class="info-label pink">wget resume</span><span>Download resume</span></div>
-<div class="info-row"><span class="info-label pink">sudo &lt;cmd&gt;</span><span>Try it and see 😏</span></div>
-<div class="info-row"><span class="info-label pink">rm -rf /</span><span>Don't even think about it</span></div>
-<div class="info-row"><span class="info-label highlight">clear</span><span>Clear the terminal</span></div>
-<div class="info-row"><span class="info-label highlight">banner</span><span>Show the welcome banner</span></div>
-
-<span class="muted">Tip: Use ↑ / ↓ arrow keys to navigate history · Tab to autocomplete</span>`,
-
-  about: () => `
-<span class="section-title">👤  About Me</span>
-
-  Computer Science Engineer with experience in <span class="highlight">MERN</span> and
-  <span class="highlight">Spring Boot</span> development, cloud deployment on <span class="accent2">AWS</span>,
-  and mobile app development.
-
-  Delivered projects in event management and automation,
-  and recognized in <span class="yellow">multiple hackathons</span> for practical,
-  innovative solutions.
-
-  <span class="muted">📍 Bauxite Road, Belagavi, Karnataka</span>`,
-
-  education: () => `
-<span class="section-title">🎓  Education</span>
-
-<div class="edu-card">
-  <span class="bold yellow">KLS Gogte Institute of Technology</span> <span class="muted">— Belagavi, Karnataka</span>
-  Bachelor of Engineering in Computer Science
-  <span class="highlight">CGPA: 9.02</span>  <span class="muted">2021 – Present</span>
-</div>
-<div class="edu-card">
-  <span class="bold yellow">RL PU College of Science</span> <span class="muted">— Belagavi, Karnataka</span>
-  12th Grade
-  <span class="highlight">Percentage: 94.33%</span>  <span class="muted">2021</span>
-</div>
-<div class="edu-card">
-  <span class="bold yellow">St John's High School</span> <span class="muted">— Belagavi, Karnataka</span>
-  10th Grade
-  <span class="highlight">Percentage: 87.2%</span>  <span class="muted">2019</span>
-</div>`,
-
-  experience: () => `
-<span class="section-title">💼  Experience</span>
-
-<div class="exp-card">
-  <span class="bold purple">Esko</span> — Software Engineer Trainee  <span class="muted">Feb 2025 – Present</span>
-  Developed full-stack web applications using the <span class="highlight">MERN stack</span>
-  and <span class="highlight">Java Spring Boot</span>, collaborating with cross-functional
-  teams. Utilized <span class="accent2">Git/GitLab</span> for version control.
-  Experienced with <span class="yellow">Agile (Jira)</span> and deployed applications
-  on <span class="accent2">AWS Cloud</span> infrastructure.
-</div>
-<div class="exp-card">
-  <span class="bold purple">Theta Dynamics Pvt. Ltd.</span> — Frontend Developer  <span class="muted">Sept 2024 – Jan 2025</span>
-  <span class="muted">Belagavi, Karnataka</span>
-  Built and integrated the frontend for <a href="https://hirehack.io" target="_blank" rel="noopener noreferrer">Hirehack</a>,
-  an AI-powered interview preparation platform, ensuring
-  seamless API communication and a responsive, user-friendly interface.
-</div>`,
-
-  projects: () => `
-<span class="section-title">🚀  Projects</span>
-
-<div class="project-card">
-  <span class="bold accent2">AURA Website</span>  <span class="muted">[ React.js · Kotlin · Jetpack Compose ]</span>
-  <span class="yellow">Impact:</span> Built the digital experience for the college's largest cultural fest.
-  <span class="yellow">Ownership:</span> Developed the React.js event site for discovery and external registrations;
-  also delivered Kotlin + Jetpack Compose apps for entry, exit, and attendance.
-  <span class="yellow">Operations:</span> Added an admin dashboard so organizers could track event statistics.
-</div>
-<div class="project-card">
-  <span class="bold accent2">Avalanche Website</span>  <span class="muted">[ React.js · Node.js · Express · MongoDB ]</span>
-  <span class="yellow">Impact:</span> Created a complete online flow for a college fest with a distinct “Pixel Parade” theme.
-  <span class="yellow">Capabilities:</span> Event discovery, registrations, QR-based payments, and a secure
-  Node.js + Express backend backed by MongoDB.
-</div>
-<div class="project-card">
-  <span class="bold accent2">Bulk Certificate Generator</span>  <span class="muted">[ Spring Boot · MongoDB · SMTP ]</span>
-  <span class="yellow">Impact:</span> Reduced manual certificate-distribution work for the Avalanche event.
-  <span class="yellow">Workflow:</span> Organizers upload a participant CSV and choose a template; the system
-  generates personalized certificates and sends them by SMTP email.
-  <span class="yellow">Architecture:</span> Spring Boot application with MongoDB for templates and participant metadata.
-</div>`,
-
-  skills: () => `
-<span class="section-title">⚡  Technical Skills</span>
-
-<span class="skill-category">Languages</span>
-<span class="skill-tag">Java</span><span class="skill-tag">HTML</span><span class="skill-tag">CSS</span><span class="skill-tag">JavaScript</span>
-
-<span class="skill-category">Frameworks & Libraries</span>
-<span class="skill-tag">Spring Boot</span><span class="skill-tag">React.js</span><span class="skill-tag">Node.js</span><span class="skill-tag">Express.js</span>
-
-<span class="skill-category">Cloud — AWS</span>
-<span class="skill-tag">EC2</span><span class="skill-tag">Route 53</span><span class="skill-tag">EBS</span><span class="skill-tag">ECS</span><span class="skill-tag">S3</span><span class="skill-tag">Lambda Functions</span><span class="skill-tag">DynamoDB</span>
-
-<span class="skill-category">Databases</span>
-<span class="skill-tag">MySQL</span><span class="skill-tag">MongoDB</span><span class="skill-tag">PostgreSQL</span>
-
-<span class="skill-category">Containerization</span>
-<span class="skill-tag">Docker</span>
-
-<span class="skill-category">Developer Tools</span>
-<span class="skill-tag">Gradle</span><span class="skill-tag">Maven</span><span class="skill-tag">Android Studio</span><span class="skill-tag">Git</span><span class="skill-tag">GitHub</span><span class="skill-tag">Postman</span><span class="skill-tag">Jenkins</span>
-
-<span class="skill-category">UI / UX</span>
-<span class="skill-tag">Figma</span><span class="skill-tag">Canva</span>`,
-
-  achievements: () => `
-<span class="section-title">🏆  Achievements — 7 Hackathon Wins</span>
-
-<div class="achievement-item"><span class="bold yellow">Finalist</span> — Smart India Hackathon (SIH) — National Finale</div>
-<div class="achievement-item"><span class="bold highlight">1st Place</span> — PyHack (BelPy Python Communities)</div>
-<div class="achievement-item"><span class="bold highlight">1st Place</span> — Hack-to-Future</div>
-<div class="achievement-item"><span class="bold accent2">2nd Place</span> — Wave 2.0 (Basaveshwar Engineering College, Bagalkot)</div>
-<div class="achievement-item"><span class="bold accent2">2nd Place</span> — Aura-2025 Digital Entry System</div>
-<div class="achievement-item"><span class="bold orange">Runner-Up</span> — TCE Hackathon Idea Bazaar (TCE Gadag)</div>
-<div class="achievement-item"><span class="bold orange">Runner-Up</span> — Odyssey Hackathon</div>`,
-
-  contact: () => `
-<span class="section-title">📬  Contact</span>
-
-<div class="info-row"><span class="info-label yellow">📧  Email</span><a href="mailto:avinashpauskar05@gmail.com">avinashpauskar05@gmail.com</a></div>
-<div class="info-row"><span class="info-label yellow">📱  Phone</span><span>+91-9008500585</span></div>
-<div class="info-row"><span class="info-label yellow">📍  Location</span><span>Belagavi, Karnataka</span></div>`,
-
-  social: () => `
-<span class="section-title">🔗  Social & Profiles</span>
-
-<div class="info-row"><span class="info-label yellow">GitHub</span><a href="https://github.com/avinash-p05" target="_blank">github.com/avinash-p05</a></div>
-<div class="info-row"><span class="info-label yellow">LinkedIn</span><a href="https://linkedin.com/in/Avinash-Pauskar" target="_blank">linkedin.com/in/Avinash-Pauskar</a></div>`,
-
-  all: () => {
-    return [
-      COMMANDS.about(),
-      COMMANDS.education(),
-      COMMANDS.experience(),
-      COMMANDS.projects(),
-      COMMANDS.skills(),
-      COMMANDS.achievements(),
-      COMMANDS.contact(),
-      COMMANDS.social()
-    ].join('\n');
-  },
-
-  banner: () => WELCOME,
-
-  clear: () => '__CLEAR__',
-
-  // ── TERMINAL UTILITIES ──────────────────────────────────
-
-  neofetch: () => `
-<div class="neofetch-container">
-  <pre class="neofetch-ascii">        /\\\n       /  \\\n      /    \\\n     /      \\\n    /   ,,   \\\n   /   |  |  -\\\n  /_-''    ''-_\\\n</pre>
-  <div class="neofetch-info">
-    <span class="bold highlight">avinash</span><span class="muted">@</span><span class="bold accent2">portfolio</span>
-    <span class="neofetch-separator">──────────────────────</span>
-    <span class="yellow">OS:</span> AvinashOS 4.0 (Belagavi Edition)
-    <span class="yellow">Host:</span> KLS Gogte Institute of Technology
-    <span class="yellow">Kernel:</span> CS-Engineering v9.02-GPA
-    <span class="yellow">Uptime:</span> 4+ years in tech
-    <span class="yellow">Packages:</span> 26 (npm) · 7 (aws) · 3 (db)
-    <span class="yellow">Shell:</span> bash 5.1.16
-    <span class="yellow">IDE:</span> VS Code · Android Studio · IntelliJ
-    <span class="yellow">Languages:</span> Java · JavaScript · HTML · CSS
-    <span class="yellow">Frameworks:</span> React.js · Spring Boot · Node.js · Express
-    <span class="yellow">Cloud:</span> AWS (EC2, S3, Lambda, ECS, Route53)
-    <span class="yellow">Hackathons:</span> 7 wins 🏆
-    <div class="neofetch-colors">
-      <span style="background:#ff5f56"></span>
-      <span style="background:#ffbd2e"></span>
-      <span style="background:#27c93f"></span>
-      <span style="background:#00e5ff"></span>
-      <span style="background:#c678dd"></span>
-      <span style="background:#ff6b81"></span>
-      <span style="background:#39ff14"></span>
-      <span style="background:#fff"></span>
-    </div>
-  </div>
-</div>`,
-
-  whoami: () => `<span class="highlight">avinash-pauskar</span> <span class="muted">(uid=1000 gid=1000 groups=developer,fullstack,cloud,hackathon-winner)</span>`,
-
-  hostname: () => `<span class="accent2">avinash-pauskar-portfolio.netlify.app</span>`,
-
-  pwd: () => `<span class="accent2">/home/avinash/portfolio</span>`,
-
-  uptime: () => {
-    const start = new Date('2021-08-01');
-    const now = new Date();
-    const years = now.getFullYear() - start.getFullYear();
-    const days = Math.floor((now - start) / (1000*60*60*24));
-    return `<span class="muted"> up ${days} days (${years}+ years in tech),  1 user,  load average: 0.42, 0.69, 0.88</span>
-<span class="muted"> Currently: Software Engineer Trainee @ Esko</span>`;
-  },
-
-  date: () => {
-    const d = new Date();
-    return `<span class="text">${d.toString()}</span>`;
-  },
-
-  history: () => {
-    if (commandHistory.length === 0) return '<span class="muted">No commands in history yet.</span>';
-    return commandHistory.map((c, i) => `  <span class="muted">${String(i + 1).padStart(4)}</span>  ${escapeHTML(c)}`).join('\n');
-  },
-
-  ls: () => `<span class="tree-folder">about.txt</span>    <span class="tree-folder">education.md</span>    <span class="tree-folder">experience.json</span>    <span class="tree-folder">projects/</span>
-<span class="tree-folder">skills.yaml</span>   <span class="tree-folder">achievements.log</span>  <span class="tree-folder">contact.conf</span>       <span class="tree-folder">social.links</span>
-<span class="tree-file">README.md</span>     <span class="tree-file">resume.pdf</span>         <span class="tree-file">.gitconfig</span>          <span class="tree-file">package.json</span>`,
-
-  tree: () => `<span class="tree-folder">.</span>
-<span class="tree-line">├── </span><span class="tree-file">README.md</span>
-<span class="tree-line">├── </span><span class="tree-file">resume.pdf</span>
-<span class="tree-line">├── </span><span class="tree-file">about.txt</span>
-<span class="tree-line">├── </span><span class="tree-file">education.md</span>
-<span class="tree-line">├── </span><span class="tree-file">experience.json</span>
-<span class="tree-line">├── </span><span class="tree-file">skills.yaml</span>
-<span class="tree-line">├── </span><span class="tree-file">achievements.log</span>
-<span class="tree-line">├── </span><span class="tree-file">contact.conf</span>
-<span class="tree-line">├── </span><span class="tree-file">social.links</span>
-<span class="tree-line">├── </span><span class="tree-file">package.json</span>
-<span class="tree-line">├── </span><span class="tree-file">.gitconfig</span>
-<span class="tree-line">└── </span><span class="tree-folder">projects/</span>
-<span class="tree-line">    ├── </span><span class="tree-file">aura-website.jsx</span>
-<span class="tree-line">    ├── </span><span class="tree-file">avalanche-website.jsx</span>
-<span class="tree-line">    └── </span><span class="tree-file">bulk-cert-generator.java</span>
-
-<span class="muted">3 directories, 13 files</span>`,
-
-  top: () => {
-    return `
-<span class="bold highlight">top - AvinashOS</span>  <span class="muted">Tasks: 7 total, 3 running, 4 sleeping</span>
-<span class="muted">%Cpu(s): 87.3 us,  4.2 sy,  0.0 ni,  8.5 id</span>
-<span class="muted">MiB Mem :  16384.0 total,   2048.0 free,  12288.0 used,   2048.0 cache</span>
-
-<table class="top-table">
-  <tr><th>PID</th><th>PROCESS</th><th>STATUS</th><th>CPU%</th><th>TIME</th></tr>
-  <tr><td class="highlight">1</td><td>spring-boot-dev</td><td><span class="highlight">RUNNING</span></td><td>28.4</td><td>1200:00</td></tr>
-  <tr><td class="highlight">2</td><td>react-frontend</td><td><span class="highlight">RUNNING</span></td><td>22.1</td><td>980:00</td></tr>
-  <tr><td class="highlight">3</td><td>node-backend</td><td><span class="highlight">RUNNING</span></td><td>18.7</td><td>850:00</td></tr>
-  <tr><td class="accent2">4</td><td>aws-deployment</td><td><span class="accent2">SLEEPING</span></td><td>8.3</td><td>640:00</td></tr>
-  <tr><td class="accent2">5</td><td>docker-containers</td><td><span class="accent2">SLEEPING</span></td><td>5.2</td><td>420:00</td></tr>
-  <tr><td class="accent2">6</td><td>hackathon-grind</td><td><span class="accent2">SLEEPING</span></td><td>3.8</td><td>336:00</td></tr>
-  <tr><td class="accent2">7</td><td>figma-designs</td><td><span class="accent2">SLEEPING</span></td><td>0.8</td><td>120:00</td></tr>
-</table>`;
-  },
-
-  fortune: () => {
-    const f = FORTUNES[Math.floor(Math.random() * FORTUNES.length)];
-    return `<span class="yellow">🔮 ${f}</span>`;
-  },
-
-};  // end COMMANDS
-
-// ── Files for cat command ─────────────────────────────────
-const FILES = {
-  'about.txt': () => COMMANDS.about(),
-  'education.md': () => COMMANDS.education(),
-  'experience.json': () => COMMANDS.experience(),
-  'skills.yaml': () => COMMANDS.skills(),
-  'achievements.log': () => COMMANDS.achievements(),
-  'contact.conf': () => COMMANDS.contact(),
-  'social.links': () => COMMANDS.social(),
-  'readme.md': () => `<span class="bold highlight"># Avinash Pauskar — Terminal Portfolio</span>\n\n<span class="muted">A terminal-style portfolio built with vanilla HTML, CSS & JS.</span>\n<span class="muted">Type <span class="accent2">help</span> to explore.</span>\n\n<span class="yellow">## Quick Start</span>\n  $ about\n  $ skills\n  $ projects`,
-  'resume.pdf': () => {
-    const a = document.createElement('a');
-    a.href = 'Avinash_Pauskar_Resume.pdf';
-    a.download = 'Avinash_Pauskar_Resume.pdf';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    return `<span class="highlight bold">✓ Downloading resume...</span>\n<span class="muted">Or use: <span class="accent2">wget resume</span></span>`;
-  },
-  'package.json': () => `<span class="purple">{</span>\n  <span class="accent2">"name"</span>: <span class="yellow">"avinash-portfolio"</span>,\n  <span class="accent2">"version"</span>: <span class="yellow">"2.0.0"</span>,\n  <span class="accent2">"description"</span>: <span class="yellow">"Terminal-style portfolio"</span>,\n  <span class="accent2">"author"</span>: <span class="yellow">"Avinash Pauskar"</span>,\n  <span class="accent2">"keywords"</span>: [<span class="yellow">"fullstack"</span>, <span class="yellow">"mern"</span>, <span class="yellow">"spring-boot"</span>, <span class="yellow">"aws"</span>],\n  <span class="accent2">"license"</span>: <span class="yellow">"MIT"</span>\n<span class="purple">}</span>`,
-  '.gitconfig': () => `<span class="purple">[user]</span>\n  name  = <span class="highlight">Avinash Pauskar</span>\n  email = <span class="accent2">avinashpauskar05@gmail.com</span>\n<span class="purple">[core]</span>\n  editor = <span class="text">code --wait</span>\n<span class="purple">[alias]</span>\n  st = status\n  co = checkout\n  br = branch`,
-};
-
-// ── Helpers ───────────────────────────────────────────────
-function appendHTML(html) {
-  const div = document.createElement('div');
-  div.classList.add('line');
-  div.innerHTML = html;
-  output.appendChild(div);
-  scrollToBottom();
-}
-
-function scrollToBottom() {
-  terminal.scrollTop = terminal.scrollHeight;
-}
-
-function processCommand(raw) {
-  let cmd = raw.trim().toLowerCase();
-  if (!cmd) return;
-
-  const aliases = { project: 'projects', work: 'experience', resume: 'wget resume', linkedin: 'social' };
-  cmd = aliases[cmd] || cmd;
-
-  // Echo the command
-  appendHTML(`<span class="prompt-prefix">visitor@avinash:~$</span> <span class="cmd-text">${escapeHTML(raw)}</span>`);
-
-  // Save history
-  commandHistory.push(raw);
-  historyIndex = commandHistory.length;
-
-  if (cmd === 'clear') {
-    output.innerHTML = '';
-    appendHTML(WELCOME);
-    return;
-  }
-
-  // ── Direct command match ──
-  const handler = COMMANDS[cmd];
-  if (handler) {
-    appendHTML(handler());
-    appendHTML('');
-    return;
-  }
-
-  // ── Parametric commands ──
-
-  // echo <message>
-  if (cmd.startsWith('echo ')) {
-    const msg = raw.trim().substring(5);
-    appendHTML(`<span class="text">${escapeHTML(msg)}</span>`);
-    appendHTML('');
-    return;
-  }
-
-  // cat <filename>
-  if (cmd.startsWith('cat ')) {
-    const filename = cmd.substring(4).trim();
-    const file = FILES[filename];
-    if (file) {
-      appendHTML(file());
-    } else {
-      appendHTML(`<span class="pink">cat: ${escapeHTML(filename)}: No such file or directory</span>\n<span class="muted">Available files: ${Object.keys(FILES).join(', ')}</span>`);
-    }
-    appendHTML('');
-    return;
-  }
-
-  // cowsay <message>
-  if (cmd.startsWith('cowsay')) {
-    const msg = raw.trim().substring(6).trim() || 'Hire Avinash!';
-    const border = '─'.repeat(msg.length + 2);
-    appendHTML(`<span class="cowsay-box"> ┌${border}┐\n │ ${escapeHTML(msg)} │\n └${border}┘</span>\n<span class="cowsay-cow">        \\   ^__^\n         \\  (oo)\\_______\n            (__)\\       )\\/\\\n                ||----w |\n                ||     ||</span>`);
-    appendHTML('');
-    return;
-  }
-
-  // sudo <anything>
-  if (cmd.startsWith('sudo ')) {
-    appendHTML(`<span class="pink bold">⚠ Permission denied.</span>\n<span class="muted">Nice try! But this terminal runs in user mode only.</span>\n<span class="muted">Avinash is the only sudoer here. 😏</span>`);
-    appendHTML('');
-    return;
-  }
-
-  // uname
-  if (cmd === 'uname' || cmd === 'uname -a') {
-    appendHTML(`<span class="text">AvinashOS 4.0.0-portfolio #1 SMP ${new Date().toDateString()} x86_64 GNU/Linux</span>`);
-    appendHTML('');
-    return;
-  }
-
-  // pip list
-  if (cmd === 'pip list' || cmd === 'pip3 list') {
-    appendHTML(`<span class="bold highlight">Package              Version    Status</span>\n<span class="neofetch-separator">────────────────────────────────────────────</span>\njava                 17.0.2     <span class="highlight">✓ installed</span>\nhtml-css             5.3.0      <span class="highlight">✓ installed</span>\njavascript-es6       2024.1     <span class="highlight">✓ installed</span>\nspring-boot          3.2.0      <span class="highlight">✓ installed</span>\nreact                18.2.0     <span class="highlight">✓ installed</span>\nnodejs               20.10.0    <span class="highlight">✓ installed</span>\nexpress              4.18.2     <span class="highlight">✓ installed</span>\ndocker               24.0.7     <span class="highlight">✓ installed</span>\nmongodb-driver       4.11.0     <span class="highlight">✓ installed</span>\nmysql-connector      8.2.0      <span class="highlight">✓ installed</span>\npostgresql           16.1       <span class="highlight">✓ installed</span>\naws-sdk              3.450.0    <span class="highlight">✓ installed</span>\nfigma-plugin         1.0.0      <span class="highlight">✓ installed</span>\n\n<span class="muted">[13 packages installed]</span>`);
-    appendHTML('');
-    return;
-  }
-
-  // npm list
-  if (cmd === 'npm list' || cmd === 'npm ls') {
-    appendHTML(`<span class="accent2">avinash-portfolio@2.0.0</span> /home/avinash/portfolio\n├── <span class="highlight">react</span>@18.2.0\n├── <span class="highlight">react-dom</span>@18.2.0\n├── <span class="highlight">node</span>@20.10.0\n├── <span class="highlight">express</span>@4.18.2\n├── <span class="highlight">mongodb</span>@6.3.0\n├── <span class="highlight">spring-boot-starter</span>@3.2.0\n├── <span class="highlight">aws-sdk</span>@3.450.0\n├── <span class="highlight">docker</span>@24.0.7\n├── <span class="highlight">jetpack-compose</span>@1.5.4\n├── <span class="highlight">kotlin</span>@1.9.21\n├── <span class="highlight">gradle</span>@8.5.0\n├── <span class="highlight">maven</span>@3.9.6\n└── <span class="highlight">jenkins</span>@2.426.1\n\n<span class="muted">13 packages, 0 vulnerabilities</span>`);
-    appendHTML('');
-    return;
-  }
-
-  // apt list
-  if (cmd === 'apt list' || cmd === 'apt list --installed') {
-    appendHTML(`<span class="muted">Listing installed packages...</span>\n\n<span class="highlight">java/stable</span>           17.0.2-1   amd64  [installed]\n<span class="highlight">nodejs/stable</span>         20.10.0-1  amd64  [installed]\n<span class="highlight">docker-ce/stable</span>      24.0.7-1   amd64  [installed]\n<span class="highlight">mongodb-org/stable</span>    7.0.4-1    amd64  [installed]\n<span class="highlight">mysql-server/stable</span>   8.2.0-1    amd64  [installed]\n<span class="highlight">postgresql/stable</span>     16.1-1     amd64  [installed]\n<span class="highlight">git/stable</span>            2.43.0-1   amd64  [installed]\n<span class="highlight">gradle/stable</span>         8.5.0-1    amd64  [installed]\n<span class="highlight">maven/stable</span>          3.9.6-1    amd64  [installed]\n<span class="highlight">jenkins/stable</span>        2.426.1-1  amd64  [installed]\n<span class="highlight">postman/stable</span>        10.21.0-1  amd64  [installed]\n<span class="highlight">figma-linux/stable</span>    0.11.4-1   amd64  [installed]\n\n<span class="muted">12 packages installed.</span>`);
-    appendHTML('');
-    return;
-  }
-
-  // brew list
-  if (cmd === 'brew list') {
-    appendHTML(`<span class="muted">==> Formulae</span>\n<span class="highlight">git</span>  <span class="highlight">gradle</span>  <span class="highlight">maven</span>  <span class="highlight">node</span>  <span class="highlight">docker</span>  <span class="highlight">mongodb-community</span>  <span class="highlight">postgresql@16</span>  <span class="highlight">openjdk@17</span>\n\n<span class="muted">==> Casks</span>\n<span class="accent2">visual-studio-code</span>  <span class="accent2">android-studio</span>  <span class="accent2">intellij-idea</span>  <span class="accent2">postman</span>  <span class="accent2">figma</span>  <span class="accent2">docker-desktop</span>`);
-    appendHTML('');
-    return;
-  }
-
-  // wget resume
-  if (cmd === 'wget resume' || cmd === 'wget resume.pdf' || cmd === 'curl resume' || cmd === 'download resume') {
-    appendHTML(`<span class="muted">--${new Date().toISOString()}--  https://avinash-pauskar-portfolio.netlify.app/Avinash_Pauskar_Resume.pdf</span>\n<span class="muted">Resolving avinash-pauskar-portfolio.netlify.app... </span><span class="highlight">connected.</span>\n<span class="muted">HTTP request sent, awaiting response... </span><span class="highlight">200 OK</span>\n<span class="muted">Length: 100859 (98K) [application/pdf]</span>\n<span class="muted">Saving to: 'Avinash_Pauskar_Resume.pdf'</span>\n\n<span class="highlight">Avinash_Pauskar_Resume 100%[==================>]  98.50K  --.-KB/s  in 0.1s</span>\n\n<span class="highlight bold">✓ Resume downloaded!</span>\n<span class="muted">📧 Or email </span><a href="mailto:avinashpauskar05@gmail.com">avinashpauskar05@gmail.com</a><span class="muted"> for the latest copy.</span>`);
-    // Trigger actual file download
-    const a = document.createElement('a');
-    a.href = 'Avinash_Pauskar_Resume.pdf';
-    a.download = 'Avinash_Pauskar_Resume.pdf';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    appendHTML('');
-    return;
-  }
-
-  // rm -rf /
-  if (cmd.startsWith('rm -rf') || cmd === 'rm -rf /') {
-    appendHTML(`<span class="pink bold">💀 Nice try!</span>\n<span class="muted">This portfolio is indestructible. It survived 7 hackathons.</span>\n<span class="muted">You think a little rm -rf scares it? 😤</span>`);
-    appendHTML('');
-    return;
-  }
-
-  // man <command>
-  if (cmd.startsWith('man ')) {
-    const topic = cmd.substring(4).trim();
-    if (COMMANDS[topic]) {
-      appendHTML(`<span class="bold highlight">MANUAL: ${topic.toUpperCase()}(1)</span>\n\n<span class="yellow">NAME</span>\n    ${topic} — display ${topic} information\n\n<span class="yellow">SYNOPSIS</span>\n    <span class="accent2">${topic}</span>\n\n<span class="yellow">DESCRIPTION</span>\n    Displays Avinash Pauskar's ${topic} details in the terminal.\n    Part of the avinash-portfolio toolkit.\n\n<span class="yellow">AUTHOR</span>\n    Written by Avinash Pauskar <avinashpauskar05@gmail.com>`);
-    } else {
-      appendHTML(`<span class="pink">No manual entry for ${escapeHTML(topic)}</span>`);
-    }
-    appendHTML('');
-    return;
-  }
-
-  // git status
-  if (cmd === 'git status') {
-    appendHTML(`<span class="highlight">On branch main</span>\n<span class="muted">Your branch is up to date with 'origin/main'.</span>\n\n<span class="text">Changes not staged for commit:</span>\n  <span class="pink">(modified)  skills.yaml</span>     <span class="muted">← always learning</span>\n  <span class="pink">(modified)  projects/</span>       <span class="muted">← always building</span>\n\n<span class="highlight">Untracked files:</span>\n  <span class="accent2">(new)  next-big-idea.md</span>  <span class="muted">← coming soon</span>`);
-    appendHTML('');
-    return;
-  }
-
-  // git log
-  if (cmd === 'git log') {
-    appendHTML(`<span class="yellow">commit a1b2c3d</span> <span class="muted">(HEAD -> main, origin/main)</span>\nAuthor: Avinash Pauskar <avinashpauskar05@gmail.com>\nDate:   Feb 2025\n\n    <span class="text">feat: Started as SWE Trainee @ Esko</span>\n\n<span class="yellow">commit e4f5g6h</span>\nAuthor: Avinash Pauskar\nDate:   Sept 2024\n\n    <span class="text">feat: Frontend dev at Theta Dynamics (Hirehack)</span>\n\n<span class="yellow">commit i7j8k9l</span>\nAuthor: Avinash Pauskar\nDate:   2024\n\n    <span class="text">feat: Built AURA & Avalanche fest websites</span>\n\n<span class="yellow">commit m0n1o2p</span>\nAuthor: Avinash Pauskar\nDate:   2021\n\n    <span class="text">init: Started B.E. in Computer Science @ GIT</span>`);
-    appendHTML('');
-    return;
-  }
-
-  // docker ps
-  if (cmd === 'docker ps') {
-    appendHTML(`<span class="bold highlight">CONTAINER ID   IMAGE                STATUS          PORTS</span>\n<span class="muted">a1b2c3d4e5f6</span>   react-portfolio      <span class="highlight">Up 4 years</span>      0.0.0.0:3000->3000\n<span class="muted">f6e5d4c3b2a1</span>   spring-boot-api      <span class="highlight">Up 4 years</span>      0.0.0.0:8080->8080\n<span class="muted">1a2b3c4d5e6f</span>   mongo:7.0            <span class="highlight">Up 4 years</span>      0.0.0.0:27017->27017\n<span class="muted">6f5e4d3c2b1a</span>   nginx:latest         <span class="highlight">Up 4 years</span>      0.0.0.0:80->80`);
-    appendHTML('');
-    return;
-  }
-
-  // exit
-  if (cmd === 'exit' || cmd === 'quit' || cmd === 'logout') {
-    appendHTML(`<span class="muted">logout</span>\n<span class="yellow">Thanks for visiting! 👋</span>\n<span class="muted">Connection to avinash-portfolio closed.</span>\n\n<span class="text">📧 </span><a href="mailto:avinashpauskar05@gmail.com">avinashpauskar05@gmail.com</a>\n<span class="text">🔗 </span><a href="https://github.com/Avinash-Pauskar" target="_blank">github.com/Avinash-Pauskar</a>\n<span class="text">🔗 </span><a href="https://linkedin.com/in/avinash-p05" target="_blank">linkedin.com/in/avinash-p05</a>`);
-    appendHTML('');
-    return;
-  }
-
-  // ── Fallback ──
-  appendHTML(`<span class="pink">Command not found: <span class="bold">${escapeHTML(cmd)}</span></span>\nType <span class="accent2 bold">help</span> to see available commands.`);
-  appendHTML('');
-}
-
-function escapeHTML(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-// ── Event Listeners ───────────────────────────────────────
-input.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') {
-    const val = input.value;
-    input.value = '';
-    processCommand(val);
-  }
-  if (e.key === 'ArrowUp') {
-    e.preventDefault();
-    if (historyIndex > 0) {
-      historyIndex--;
-      input.value = commandHistory[historyIndex];
-    }
-  }
-  if (e.key === 'ArrowDown') {
-    e.preventDefault();
-    if (historyIndex < commandHistory.length - 1) {
-      historyIndex++;
-      input.value = commandHistory[historyIndex];
-    } else {
-      historyIndex = commandHistory.length;
-      input.value = '';
-    }
-  }
-  if (e.key === 'Tab') {
-    e.preventDefault();
-    const partial = input.value.trim().toLowerCase();
-    const allCmds = [...Object.keys(COMMANDS), 'cat', 'echo', 'cowsay', 'sudo', 'uname', 'uname -a', 'pip list', 'npm list', 'npm ls', 'apt list', 'brew list', 'wget resume', 'rm -rf /', 'man', 'git status', 'git log', 'docker ps', 'exit'];
-    const matches = allCmds.filter(c => c.startsWith(partial));
-    if (matches.length === 1) {
-      input.value = matches[0];
-    } else if (matches.length > 1 && partial.length > 0) {
-      appendHTML(`<span class="prompt-prefix">visitor@avinash:~$</span> <span class="cmd-text">${escapeHTML(input.value)}</span>`);
-      appendHTML(`<span class="muted">${matches.join('  ')}</span>`);
-    }
-  }
-});
-
-// Click anywhere to focus input
-terminal.addEventListener('click', () => input.focus());
-
-function restoreTerminal() {
-  terminalWindow.hidden = false;
-  terminalWindow.classList.remove('minimized');
-  dockTerminal.classList.add('active');
-  input.focus();
-}
-
-minimizeButton.addEventListener('click', () => {
-  terminalWindow.classList.remove('maximized');
-  terminalWindow.classList.add('minimized');
-});
-
-maximizeButton.addEventListener('click', () => {
-  restoreTerminal();
-  terminalWindow.classList.toggle('maximized');
-  maximizeButton.textContent = terminalWindow.classList.contains('maximized') ? '❐' : '□';
-});
-
-closeButton.addEventListener('click', () => {
-  terminalWindow.hidden = true;
-  dockTerminal.classList.remove('active');
-});
-
-dockTerminal.addEventListener('click', () => {
-  if (terminalWindow.hidden || terminalWindow.classList.contains('minimized')) restoreTerminal();
-  else minimizeButton.click();
-});
-
-function updateDesktopClock() {
-  document.getElementById('desktop-clock').textContent = new Intl.DateTimeFormat([], { weekday: 'short', hour: '2-digit', minute: '2-digit' }).format(new Date());
-}
-updateDesktopClock();
-setInterval(updateDesktopClock, 30000);
-
-document.querySelector('.quick-actions').addEventListener('click', (event) => {
-  const button = event.target.closest('[data-command]');
-  if (!button || input.disabled) return;
-  processCommand(button.dataset.command);
-  input.focus();
-});
-
-document.querySelector('.desktop-icons').addEventListener('click', (event) => {
-  const icon = event.target.closest('[data-command]');
-  if (!icon || input.disabled) return;
-  restoreTerminal();
-  processCommand(icon.dataset.command);
-  input.focus();
-});
-
-document.querySelector('.ubuntu-dock').addEventListener('click', (event) => {
-  const app = event.target.closest('.dock-icon');
-  if (!app || app === dockTerminal || input.disabled) return;
-  restoreTerminal();
-  processCommand(`sudo launch ${app.title || 'application'}`);
-});
-
-// ── Boot Sequence ─────────────────────────────────────────
-function boot() {
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const lines = [
-    { text: '<span class="muted">[system] Initializing terminal...</span>', delay: 0 },
-    { text: '<span class="muted">[system] Loading portfolio data...</span>', delay: 400 },
-    { text: '<span class="muted">[system] Connection established ✓</span>', delay: 800 },
-    { text: '', delay: 1000 },
-    { text: WELCOME, delay: 1200 }
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fmt = n => '₹' + n.toLocaleString('en-IN');
+
+  $('#year').textContent = new Date().getFullYear();
+  const isMac = /Mac|iPhone|iPad/.test(navigator.platform);
+  if (isMac) $$('#kbd-hint, #kbd-hint-2').forEach(k => k.textContent = '⌘ K');
+
+  const toast = msg => {
+    const t = $('#toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(() => t.classList.remove('show'), 1800);
+  };
+
+  addEventListener('scroll', () => $('#nav').classList.toggle('scrolled', scrollY > 8), { passive: true });
+
+  // ---------- reveal + count-up ----------
+  const countUp = el => {
+    const target = +el.dataset.count, suffix = el.dataset.suffix || '';
+    if (reduced) { el.textContent = target.toLocaleString('en-IN') + suffix; return; }
+    const start = performance.now(), dur = 1400;
+    const step = now => {
+      const p = Math.min((now - start) / dur, 1), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(target * e).toLocaleString('en-IN') + suffix;
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+  const io = new IntersectionObserver(entries => entries.forEach(en => {
+    if (!en.isIntersecting) return;
+    en.target.classList.add('in');
+    $$('[data-count]', en.target).forEach(countUp);
+    io.unobserve(en.target);
+  }), { threshold: 0.15 });
+  $$('.reveal').forEach(el => io.observe(el));
+
+  $$('.project').forEach(card => card.addEventListener('pointermove', e => {
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+    card.style.setProperty('--my', `${e.clientY - r.top}px`);
+  }));
+
+  // ---------- hero topology ----------
+  const canvas = $('#topology'), ctx = canvas.getContext('2d');
+  const nodes = {
+    client:   { x: .08, y: .50, label: 'client' },
+    gateway:  { x: .26, y: .50, label: 'gateway' },
+    payments: { x: .46, y: .28, label: 'payments' },
+    redis:    { x: .46, y: .76, label: 'redis' },
+    ledger:   { x: .66, y: .28, label: 'ledger' },
+    kafka:    { x: .76, y: .62, label: 'kafka' },
+    dash:     { x: .93, y: .30, label: 'dashboard' },
+    notify:   { x: .93, y: .84, label: 'notifier' },
+  };
+  const edges = [['client','gateway'],['gateway','payments'],['payments','redis'],['payments','ledger'],['ledger','kafka'],['kafka','dash'],['kafka','notify'],['gateway','redis']];
+  const routes = [
+    { path: ['client','gateway','payments','ledger','kafka','dash'], w: 5 },
+    { path: ['client','gateway','payments','ledger','kafka','notify'], w: 4 },
+    { path: ['client','gateway','redis'], w: 2, color: '#7aa2ff' },
+    { path: ['client','gateway','payments','redis'], w: 1, color: '#7aa2ff' },
+    { path: ['client','gateway','payments'], w: 1, reject: true },
   ];
+  const totalW = routes.reduce((s, r) => s + r.w, 0);
+  const pick = () => { let r = Math.random() * totalW; for (const rt of routes) if ((r -= rt.w) < 0) return rt; return routes[0]; };
 
-  input.disabled = true;
+  let W = 0, H = 0, particles = [], flashes = [], events = 0, last = 0, spawnAcc = 0;
+  const pos = id => ({ x: nodes[id].x * W, y: nodes[id].y * H });
+  const resize = () => {
+    const dpr = Math.min(devicePixelRatio || 1, 2), r = canvas.getBoundingClientRect();
+    W = r.width; H = r.height;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  };
+  const spawn = () => {
+    const rt = pick();
+    particles.push({ rt, seg: 0, t: 0, speed: 1.6 + Math.random() * 0.8 });
+  };
+  const counter = $('#event-count');
+  const draw = now => {
+    const dt = Math.min((now - last) / 1000, 0.05); last = now;
+    ctx.clearRect(0, 0, W, H);
 
-  lines.forEach(({ text, delay }) => {
-    setTimeout(() => {
-      appendHTML(text);
-      if (delay === lines[lines.length - 1].delay) {
-        input.disabled = false;
-        input.focus();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#242830';
+    edges.forEach(([a, b]) => { const p = pos(a), q = pos(b); ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke(); });
+
+    spawnAcc += dt;
+    while (spawnAcc > 0.16) { spawnAcc -= 0.16; if (particles.length < 70) spawn(); }
+
+    particles = particles.filter(pt => {
+      const path = pt.rt.path, a = pos(path[pt.seg]), b = pos(path[pt.seg + 1]);
+      const len = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+      pt.t += (pt.speed * 140 * dt) / len;
+      if (pt.t >= 1) {
+        pt.seg++; pt.t = 0;
+        const at = path[pt.seg];
+        if (at === 'kafka') { events++; counter.textContent = events.toLocaleString('en-IN') + ' events'; }
+        if (pt.seg >= path.length - 1) {
+          flashes.push({ ...pos(at), life: 1, color: pt.rt.reject ? '#ff6b6b' : (pt.rt.color || '#c8f560') });
+          return false;
+        }
       }
-    }, reduceMotion ? 0 : delay);
+      const x = a.x + (b.x - a.x) * pt.t, y = a.y + (b.y - a.y) * pt.t;
+      const c = pt.rt.reject && pt.seg >= 1 ? '#ff6b6b' : (pt.rt.color || '#c8f560');
+      ctx.fillStyle = c; ctx.globalAlpha = .9;
+      ctx.beginPath(); ctx.arc(x, y, 2.3, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = .18; ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 1;
+      return true;
+    });
+
+    flashes = flashes.filter(f => {
+      f.life -= dt * 1.8;
+      ctx.strokeStyle = f.color; ctx.globalAlpha = Math.max(f.life, 0);
+      ctx.beginPath(); ctx.arc(f.x, f.y, 14 + (1 - f.life) * 14, 0, Math.PI * 2); ctx.stroke();
+      ctx.globalAlpha = 1;
+      return f.life > 0;
+    });
+
+    ctx.font = '11px Geist Mono, ui-monospace, monospace';
+    ctx.textAlign = 'center';
+    Object.values(nodes).forEach(n => {
+      const x = n.x * W, y = n.y * H, w = ctx.measureText(n.label).width + 18;
+      ctx.fillStyle = '#161920'; ctx.strokeStyle = '#2c313a';
+      ctx.beginPath(); ctx.roundRect(x - w / 2, y - 12, w, 24, 6); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#c3c8d0'; ctx.fillText(n.label, x, y + 4);
+    });
+
+    if (!reduced) requestAnimationFrame(draw);
+  };
+  resize();
+  addEventListener('resize', resize);
+  if (reduced) { last = performance.now(); draw(last); }
+  else requestAnimationFrame(t => { last = t; draw(t); });
+
+  // ---------- payment playground ----------
+  const START = 2000;
+  let state;
+  const newKey = () => 'pay_' + Math.random().toString(36).slice(2, 10);
+  const reset = () => {
+    state = { customer: START, merchant: 0, keys: new Map(), seq: 1000, key: newKey(), entries: 0 };
+    $('#idem-key').textContent = state.key;
+    $('#ledger-body').innerHTML = '';
+    $('#ledger-empty').hidden = false;
+    $('#pane-log').innerHTML = '<div class="empty">Send a payment to see the request flow.</div>';
+    renderBalances();
+  };
+  let amount = 500;
+  $$('#amounts .chip').forEach(c => c.addEventListener('click', () => {
+    $$('#amounts .chip').forEach(x => x.setAttribute('aria-pressed', 'false'));
+    c.setAttribute('aria-pressed', 'true');
+    amount = +c.dataset.amt;
+  }));
+
+  const renderBalances = () => {
+    const bc = $('#bal-c'), bm = $('#bal-m');
+    if (bc.textContent !== fmt(state.customer)) { bc.classList.add('flash'); setTimeout(() => bc.classList.remove('flash'), 400); }
+    bc.textContent = fmt(state.customer);
+    bm.textContent = fmt(state.merchant);
+    const ok = state.customer + state.merchant === START && state.customer >= 0;
+    $('#invariant').innerHTML = ok ? '✓ debits = credits · balance ≥ 0' : '<span class="err">✗ invariant broken</span>';
+  };
+
+  const log = (html, delay = 0) => new Promise(res => setTimeout(() => {
+    const pane = $('#pane-log');
+    $('.empty', pane)?.remove();
+    const d = document.createElement('div');
+    d.className = 'log-line';
+    d.innerHTML = `<span class="t">${new Date().toTimeString().slice(0, 8)}</span>  ${html}`;
+    pane.appendChild(d);
+    pane.scrollTop = pane.scrollHeight;
+    res();
+  }, reduced ? 0 : delay));
+
+  const addLedger = (txn, amt) => {
+    $('#ledger-empty').hidden = true;
+    const body = $('#ledger-body');
+    body.insertAdjacentHTML('afterbegin',
+      `<tr><td>${txn}</td><td>merchant</td><td>—</td><td class="cr">${fmt(amt)}</td></tr>` +
+      `<tr><td>${txn}</td><td>customer</td><td class="dr">${fmt(amt)}</td><td>—</td></tr>`);
+    while (body.rows.length > 40) body.deleteRow(-1);
+  };
+
+  // core transfer logic: idempotency check, then balance check under a "row lock"
+  const transfer = (key, amt) => {
+    if (state.keys.has(key)) return { ...state.keys.get(key), replay: true };
+    let result;
+    if (amt > state.customer) {
+      result = { status: 422, txn: null };
+    } else {
+      const txn = 'txn_' + (++state.seq);
+      state.customer -= amt; state.merchant += amt; state.entries += 2;
+      addLedger(txn, amt);
+      result = { status: 201, txn };
+    }
+    state.keys.set(key, result);
+    return result;
+  };
+
+  let busy = false;
+  const lock = async fn => { if (busy) return; busy = true; $$('.actions .btn').forEach(b => b.disabled = true); try { await fn(); } finally { busy = false; $$('.actions .btn').forEach(b => b.disabled = false); } };
+
+  const send = key => lock(async () => {
+    const amt = amount;
+    await log(`<span class="info">POST</span> /payments  amount=${fmt(amt)}  key=${key}`);
+    await log(`  redis  GET idem:${key} → ${state.keys.has(key) ? '<span class="warn">hit</span>' : 'miss'}`, 220);
+    const r = transfer(key, amt);
+    if (r.replay) {
+      await log(`  <span class="warn">200 replayed</span>  same key seen before, so no new ledger entry (${r.txn || 'original was rejected'})`, 240);
+      toast('Duplicate blocked by idempotency key');
+    } else if (r.status === 422) {
+      await log(`  postgres  SELECT … FOR UPDATE  balance=${fmt(state.customer)}`, 240);
+      await log(`  <span class="err">422 insufficient_funds</span>  rejected, balance unchanged`, 240);
+      toast('Overdraft rejected');
+    } else {
+      await log(`  postgres  SELECT … FOR UPDATE  → debit customer, credit merchant`, 240);
+      await log(`  outbox  INSERT payment.completed (${r.txn})  same transaction`, 200);
+      await log(`  <span class="ok">201 created</span>  ${r.txn}`, 160);
+      await log(`  kafka  relay published payment.completed → <span class="ok">ack</span>`, 380);
+    }
+    renderBalances();
   });
-}
 
-boot();
+  $('#send').addEventListener('click', () => { send(state.key); });
+  $('#retry').addEventListener('click', () => {
+    if (!state.keys.has(state.key)) { toast('Send a payment first, then retry it'); return; }
+    send(state.key);
+  });
+  $('#new-key').addEventListener('click', () => { state.key = newKey(); $('#idem-key').textContent = state.key; });
+
+  $('#burst').addEventListener('click', () => lock(async () => {
+    const before = state.customer;
+    await log(`<span class="info">BURST</span> 50 concurrent POST /payments  amount=₹100 each  balance=${fmt(before)}`);
+    let ok = 0, rej = 0, minBal = state.customer;
+    const keys = Array.from({ length: 50 }, newKey);
+    for (let i = 0; i < keys.length; i++) {
+      const r = transfer(keys[i], 100);
+      r.status === 201 ? ok++ : rej++;
+      minBal = Math.min(minBal, state.customer);
+      if (i % 10 === 9) { renderBalances(); await log(`  … ${i + 1}/50 processed  accepted=${ok}  rejected=${rej}`, 120); }
+    }
+    await log(`  <span class="ok">${ok} accepted</span> · <span class="err">${rej} rejected</span> · lowest balance ${fmt(minBal)} · <span class="ok">no overdraft</span>`, 200);
+    renderBalances();
+    toast(`${ok} accepted, ${rej} rejected, never below ₹0`);
+  }));
+
+  $('#reset').addEventListener('click', () => { if (!busy) reset(); });
+
+  $$('.tab').forEach(t => t.addEventListener('click', () => {
+    $$('.tab').forEach(x => x.setAttribute('aria-selected', 'false'));
+    t.setAttribute('aria-selected', 'true');
+    $('#pane-log').hidden = t.dataset.pane !== 'log';
+    $('#pane-ledger').hidden = t.dataset.pane !== 'ledger';
+  }));
+
+  reset();
+
+  // ---------- contact ----------
+  $('#copy-mail').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText('avinashpauskar05@gmail.com'); toast('Email copied'); }
+    catch { location.href = 'mailto:avinashpauskar05@gmail.com'; }
+  });
+
+  // ---------- command palette ----------
+  const go = id => () => document.getElementById(id).scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
+  const commands = [
+    { label: 'Payment playground', hint: 'section', run: go('playground') },
+    { label: 'Experience', hint: 'section', run: go('experience') },
+    { label: 'Projects', hint: 'section', run: go('projects') },
+    { label: 'Hackathons, skills & education', hint: 'section', run: go('about') },
+    { label: 'Contact', hint: 'section', run: go('contact') },
+    { label: 'Send a test payment', hint: 'action', run: () => { go('playground')(); setTimeout(() => $('#send').click(), 500); } },
+    { label: 'Fire 50 concurrent payments', hint: 'action', run: () => { go('playground')(); setTimeout(() => $('#burst').click(), 500); } },
+    { label: 'Download résumé', hint: 'pdf', run: () => { const a = document.createElement('a'); a.href = 'Avinash_Pauskar_Resume.pdf'; a.download = ''; a.click(); } },
+    { label: 'Copy email address', hint: 'action', run: () => $('#copy-mail').click() },
+    { label: 'Open GitHub', hint: 'link', run: () => open('https://github.com/avinash-p05', '_blank', 'noopener') },
+    { label: 'Open LinkedIn', hint: 'link', run: () => open('https://linkedin.com/in/avinash-pauskar', '_blank', 'noopener') },
+    { label: 'FinCore live demo', hint: 'link', run: () => open('https://avinash-p05.github.io/fin-core/', '_blank', 'noopener') },
+    { label: 'DevMind architecture', hint: 'link', run: () => open('https://avinash-p05.github.io/devmind/devmind-architecture.html', '_blank', 'noopener') },
+    { label: 'FlowForge architecture', hint: 'link', run: () => open('https://avinash-p05.github.io/flow-forge/flowforge-architecture.html', '_blank', 'noopener') },
+  ];
+  const bg = $('#palette-bg'), input = $('#palette-input'), list = $('#palette-list');
+  let filtered = commands, active = 0;
+  const renderList = () => {
+    list.innerHTML = filtered.length
+      ? filtered.map((c, i) => `<li class="${i === active ? 'active' : ''}" data-i="${i}"><span>${c.label}</span><span>${c.hint}</span></li>`).join('')
+      : '<li><span>No matches</span><span></span></li>';
+  };
+  const openPalette = () => { bg.classList.add('open'); bg.setAttribute('aria-hidden', 'false'); input.value = ''; filtered = commands; active = 0; renderList(); setTimeout(() => input.focus(), 0); };
+  const closePalette = () => { bg.classList.remove('open'); bg.setAttribute('aria-hidden', 'true'); };
+  const runActive = () => { const c = filtered[active]; if (!c) return; closePalette(); c.run(); };
+  input.addEventListener('input', () => {
+    const q = input.value.toLowerCase().trim();
+    filtered = commands.filter(c => c.label.toLowerCase().includes(q) || c.hint.includes(q));
+    active = 0; renderList();
+  });
+  list.addEventListener('mousemove', e => { const li = e.target.closest('li[data-i]'); if (li && +li.dataset.i !== active) { active = +li.dataset.i; renderList(); } });
+  list.addEventListener('click', e => { const li = e.target.closest('li[data-i]'); if (li) { active = +li.dataset.i; runActive(); } });
+  bg.addEventListener('click', e => { if (e.target === bg) closePalette(); });
+  $('#open-palette').addEventListener('click', openPalette);
+  addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); bg.classList.contains('open') ? closePalette() : openPalette(); return; }
+    if (!bg.classList.contains('open')) return;
+    if (e.key === 'Escape') closePalette();
+    else if (e.key === 'ArrowDown') { e.preventDefault(); active = (active + 1) % Math.max(filtered.length, 1); renderList(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); active = (active - 1 + filtered.length) % Math.max(filtered.length, 1); renderList(); }
+    else if (e.key === 'Enter') { e.preventDefault(); runActive(); }
+  });
+})();
 </script>
-
 </body>
 </html>

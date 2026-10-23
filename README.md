@@ -1,38 +1,30 @@
-# Avinash Pauskar — Terminal Portfolio
+# Avinash Pauskar — Portfolio
 
-A terminal-style portfolio website built with vanilla HTML, CSS & JavaScript. No frameworks, no dependencies — just a single `index.html`.
+A single-page portfolio built with plain HTML, CSS and JavaScript. There's no framework and no build step; the whole site is `index.html`.
 
 ## Live
 
 **[avinash-pauskar-portfolio.netlify.app](https://avinash-pauskar-portfolio.netlify.app)**
 
-## Features
+## What's in it
 
-- Realistic terminal UI with CRT scanline effect
-- 20+ commands including `neofetch`, `whoami`, `ls`, `cat`, `tree`, `pip list`, `cowsay`, `fortune`, and more
-- Tab auto-completion & command history (↑/↓)
-- Boot-up animation sequence
-- Fully responsive for mobile
-- Zero dependencies — deploys anywhere
+- **Live topology hero.** An animated canvas of a payment system where requests flow from the gateway to payments, the ledger, Kafka and the services after it. Some are deduped or rejected along the way.
+- **Payment playground.** An in-browser model of how FinCore handles money. Visitors can retry a payment with the same idempotency key, try to overdraw, or fire 50 concurrent payments, and watch the double-entry ledger stay balanced.
+- **Command palette.** Press `Ctrl K` (or `⌘ K` on a Mac) to jump to sections, run playground actions, copy the email address or open links.
+- Animated impact metrics, experience, featured and pinned projects, hackathon wins, skills, education and certifications.
+- Responsive down to phone widths, and it respects `prefers-reduced-motion`.
 
-## Commands
+## Run locally
 
-| Category | Commands |
-|----------|---------|
-| Portfolio | `about`, `education`, `experience`, `projects`, `skills`, `achievements`, `contact`, `social`, `all` |
-| Terminal | `neofetch`, `whoami`, `hostname`, `uname -a`, `pwd`, `ls`, `tree`, `cat <file>`, `date`, `uptime`, `history`, `echo <msg>` |
-| Packages | `pip list`, `npm list`, `apt list`, `brew list` |
-| Git | `git status`, `git log` |
-| Docker | `docker ps` |
-| Fun | `cowsay <msg>`, `fortune`, `top`, `wget resume`, `sudo`, `rm -rf /` |
-| Misc | `clear`, `banner`, `man <cmd>`, `exit` |
+```bash
+python -m http.server 5173
+```
 
 ## Deploy
 
-Just drop the folder on [Netlify](https://netlify.com), [Vercel](https://vercel.com), or any static host. No build step needed.
+Push to the connected Netlify site, or deploy the folder with the Netlify CLI:
 
 ```bash
-# Or use Netlify CLI
 netlify deploy --dir . --prod
 ```
 
