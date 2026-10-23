@@ -51,7 +51,7 @@
     #board.grabbing { cursor: grabbing; }
     #world { position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform; }
     .item { position: absolute; transform: rotate(var(--r, 0deg)); transition: box-shadow .2s, transform .2s; }
-    .drag { cursor: grab; }
+    .drag { cursor: default; }
     .drag.lifted { cursor: grabbing; box-shadow: var(--shadow-lift); transform: rotate(var(--r, 0deg)) scale(1.03); z-index: 5; }
     .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); padding: 24px; }
     .zone-label { position: absolute; font: 700 44px/1 var(--hand); color: var(--ink); white-space: nowrap; pointer-events: none; }
@@ -144,8 +144,16 @@
     .file b { font: 700 15px var(--display); letter-spacing: -0.02em; }
     .file span { color: var(--faint); }
     .presence { top: 14px; right: 14px; display: flex; align-items: center; gap: 10px; padding: 6px 6px 6px 12px; }
-    .avatars { display: flex; }
-    .avatars i { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font: 600 11px var(--sans); font-style: normal; color: #fff; border: 2px solid var(--card); margin-left: -6px; }
+    .avatars { display: flex; padding-left: 6px; }
+    .av { position: relative; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font: 600 11px var(--sans); color: #fff; background: var(--c); border: 2px solid var(--card); margin-left: -6px; padding: 0; cursor: default; transition: transform .15s, box-shadow .25s; }
+    button.av { cursor: pointer; }
+    button.av:hover { transform: translateY(-1px); }
+    .av .online { position: absolute; right: -2px; bottom: -2px; width: 10px; height: 10px; border-radius: 50%; background: #34c759; border: 2px solid var(--card); }
+    .av.active, .av.following { box-shadow: 0 0 0 2px var(--card), 0 0 0 4px var(--c); }
+    .av[data-tip]:hover::after { content: attr(data-tip); position: absolute; top: 38px; right: -8px; white-space: nowrap; background: var(--text); color: var(--paper); font: 500 12px var(--sans); padding: 6px 9px; border-radius: 7px; pointer-events: none; z-index: 40; }
+    .role-pill { display: inline-flex; align-items: center; gap: 6px; font: 500 12.5px var(--sans); color: var(--muted); padding: 6px 10px; border-radius: 8px; background: var(--paper); border: 1px solid var(--line); white-space: nowrap; }
+    .role-pill svg { width: 14px; height: 14px; }
+    #request-btn.requested { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
     .presence .btn { padding: 7px 12px; font-size: 13px; }
     .toolbar { left: 50%; bottom: calc(16px + env(safe-area-inset-bottom)); transform: translateX(-50%); display: flex; align-items: center; gap: 2px; padding: 5px; max-width: calc(100vw - 24px); overflow-x: auto; scrollbar-width: none; }
     .toolbar::-webkit-scrollbar { display: none; }
@@ -185,8 +193,39 @@
     #ink { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; z-index: 50; }
     #ink path { fill: none; stroke: var(--accent); stroke-width: 2.6; stroke-linecap: round; transition: stroke-dashoffset 1s ease, opacity .6s; }
     .item.ap-moving { transition: left .9s cubic-bezier(.3, .7, .3, 1), top .9s cubic-bezier(.3, .7, .3, 1), transform .2s, box-shadow .2s; }
-    .item.history-move { transition: left .35s ease, top .35s ease, transform .2s; }
-    .tb:disabled { opacity: .35; cursor: default; background: none; }
+    .item.shake { animation: shake .42s ease; }
+    @keyframes shake { 20% { translate: -7px 0; } 40% { translate: 6px 0; } 60% { translate: -4px 0; } 80% { translate: 2px 0; } }
+
+    /* request edit access */
+    .modal-bg { position: fixed; inset: 0; z-index: 60; background: rgba(10, 10, 15, .45); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); display: grid; place-items: center; padding: 16px; }
+    .modal-bg[hidden] { display: none; }
+    .modal { width: min(420px, 100%); background: var(--card); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow-lift); padding: 22px; animation: pop .18s ease; }
+    @keyframes pop { from { opacity: 0; transform: scale(.96) translateY(6px); } }
+    .modal-head { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 8px; }
+    .modal-head .thumb { width: 40px; height: 40px; border-radius: 10px; background: var(--accent); display: grid; place-items: center; flex: none; }
+    .modal h2 { font: 700 20px/1.2 var(--display); letter-spacing: -0.02em; }
+    .modal-head p { font-size: 13px; color: var(--muted); margin-top: 2px; }
+    .modal .x { margin-left: auto; border: 0; background: none; font-size: 22px; line-height: 1; color: var(--faint); cursor: pointer; padding: 2px 4px; }
+    .modal label { display: block; font: 600 13px var(--sans); margin: 14px 0 6px; }
+    .modal label span { font-weight: 400; color: var(--faint); }
+    .modal input, .modal textarea { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); color: var(--text); font: 14px var(--sans); outline: none; resize: vertical; }
+    .modal input:focus, .modal textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+    .modal .err { color: #e5484d; font-size: 13px; margin-top: 8px; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
+    .req-done { text-align: center; padding: 8px 4px 2px; }
+    .req-done .check { width: 52px; height: 52px; border-radius: 50%; background: #34c759; color: #fff; display: grid; place-items: center; font-size: 26px; margin: 0 auto 14px; animation: pop .3s ease; }
+    .req-done p { color: var(--muted); font-size: 14px; margin: 8px 0 18px; line-height: 1.5; }
+    .snack { position: fixed; left: 50%; bottom: calc(76px + env(safe-area-inset-bottom)); transform: translate(-50%, 10px); z-index: 40; display: flex; align-items: center; gap: 12px; padding: 8px 8px 8px 16px; border-radius: 12px; background: var(--text); color: var(--paper); font-size: 13.5px; box-shadow: var(--shadow-lift); opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; width: max-content; max-width: calc(100vw - 24px); }
+    .snack.on { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+    .snack .btn { padding: 6px 12px; font-size: 13px; background: var(--accent); border-color: var(--accent); color: #fff; white-space: nowrap; }
+    .snack .btn[hidden] { display: none; }
+
+    /* following Avinash */
+    .follow-frame { position: fixed; inset: 0; z-index: 14; pointer-events: none; border: 3px solid var(--accent); opacity: 0; transition: opacity .25s; }
+    .following .follow-frame { opacity: 1; }
+    .follow-bar { position: fixed; top: 0; left: 50%; transform: translateX(-50%); z-index: 25; display: flex; align-items: center; gap: 8px; padding: 5px 6px 6px 12px; background: var(--accent); color: #fff; font: 600 12.5px var(--sans); border-radius: 0 0 10px 10px; white-space: nowrap; }
+    .follow-bar[hidden] { display: none; }
+    .follow-bar button { border: 0; background: rgba(255, 255, 255, .22); color: #fff; font: 600 12px var(--sans); padding: 4px 10px; border-radius: 6px; cursor: pointer; }
     .chrome { touch-action: none; }
     .chrome.toolbar { touch-action: pan-x; }
 
@@ -203,7 +242,7 @@
     .page-view .wins-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
     .page-view .wins-grid .item { margin: 0; }
     .page-view .sticky { width: auto; }
-    .page-view #ink, .page-view .ap-select, .page-view #arrows, .page-view .note, .page-view .minimap, .page-view #guide, .page-view .hint, .page-view [data-canvas-only] { display: none !important; }
+    .page-view .follow-frame, .page-view .follow-bar, .page-view .snack, .page-view #ink, .page-view .ap-select, .page-view #arrows, .page-view .note, .page-view .minimap, .page-view #guide, .page-view .hint, .page-view [data-canvas-only] { display: none !important; }
     .page-view .postcard { grid-template-columns: 1fr; }
     .page-view .postcard .divider { display: none; }
     .page-view .drag { cursor: auto; }
@@ -211,7 +250,7 @@
     .wins-grid { display: contents; }
 
     @media (max-width: 760px) {
-      .file span, .presence .avatars, .minimap, .hint { display: none; }
+      .file span, .file b, .role-pill, .presence .resume-btn, .minimap, .hint { display: none; }
       .file { padding: 6px 12px 6px 6px; }
       #guide .bubble { width: 240px; }
     }
@@ -269,7 +308,7 @@
 
     <!-- ===== projects ===== -->
     <section class="zone" data-zone="projects" aria-label="Projects">
-      <h2 class="zone-label" data-x="-640" data-y="300">Things I've built<small>drag the cards around</small></h2>
+      <h2 class="zone-label" data-x="-640" data-y="300">Things I've built<small>open a card's links to dive in</small></h2>
 
       <article class="item card project drag" data-x="-640" data-y="390" data-w="370">
         <div class="art" style="background: linear-gradient(135deg, #e9f7d8, #c8ecb1);"><svg viewBox="0 0 370 120" aria-hidden="true">
@@ -358,7 +397,7 @@
 
     <!-- ===== wins ===== -->
     <section class="zone" data-zone="wins" aria-label="Hackathon wins">
-      <h2 class="zone-label" data-x="-1500" data-y="-470">Hackathons<small>7 finishes · drag them around</small></h2>
+      <h2 class="zone-label" data-x="-1500" data-y="-470">Hackathons<small>7 finishes, 2 wins</small></h2>
       <div class="wins-grid">
         <div class="item sticky yellow drag" data-x="-1500" data-y="-370" style="--r: -3deg"><div class="place">🥇 1st</div><div class="what">PyHack</div><div class="where">BelPy Python Community</div></div>
         <div class="item sticky green drag" data-x="-1270" data-y="-380" style="--r: 2deg"><div class="place">🥇 1st</div><div class="what">Hack-to-Future</div><div class="where">2025</div></div>
@@ -443,8 +482,13 @@
   <b>Avinash Pauskar</b><span>/ portfolio.canvas</span>
 </div>
 <div class="chrome presence">
-  <div class="avatars" title="Viewing now"><i style="background: #5b5bf7;">AP</i><i style="background: #f0883e;">You</i></div>
-  <a class="btn primary" href="Avinash_Pauskar_Resume.pdf" download>Résumé</a>
+  <div class="avatars">
+    <button class="av" id="av-ap" style="--c: #5b5bf7;" data-tip="Avinash Pauskar · owner · click to follow" aria-label="Follow Avinash">AP<span class="online"></span></button>
+    <span class="av" style="--c: #f0883e;" data-tip="You · can view">You</span>
+  </div>
+  <span class="role-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>View only</span>
+  <button class="btn primary" id="request-btn">Request edit access</button>
+  <a class="btn resume-btn" href="Avinash_Pauskar_Resume.pdf" download>Résumé</a>
 </div>
 
 <nav class="chrome toolbar" aria-label="Canvas navigation">
@@ -459,8 +503,6 @@
   <button class="tb" id="zoom-out" aria-label="Zoom out" data-canvas-only>−</button>
   <span id="zoom-label" data-canvas-only>100%</span>
   <button class="tb" id="zoom-in" aria-label="Zoom in" data-canvas-only>+</button>
-  <button class="tb" id="undo" title="Undo move (Ctrl+Z)" aria-label="Undo" data-canvas-only><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
-  <button class="tb" id="redo" title="Redo move (Ctrl+Shift+Z)" aria-label="Redo" data-canvas-only><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
   <button class="tb" id="fit" title="Fit everything (0)" data-canvas-only><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
   <span class="sep"></span>
   <button class="tb" id="tour-btn" data-canvas-only>▶ Tour</button>
@@ -480,6 +522,41 @@
   </div>
 </div>
 <div class="toast" id="toast"></div>
+
+<div class="snack" id="snack" role="status">
+  <span id="snack-text">🔒 You have view-only access to this canvas.</span>
+  <button class="btn" id="snack-req">Request edit access</button>
+</div>
+
+<div class="follow-frame" aria-hidden="true"></div>
+<div class="follow-bar" id="follow-bar" hidden>Following Avinash <button id="follow-stop">Stop</button></div>
+
+<div class="modal-bg" id="req-modal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="req-title">
+    <form id="req-form" novalidate>
+      <div class="modal-head">
+        <div class="thumb"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M5 3l15 8-7 2-3 7z" fill="#fff"/></svg></div>
+        <div><h2 id="req-title">Request edit access</h2><p>portfolio.canvas · owned by Avinash Pauskar</p></div>
+        <button type="button" class="x" id="req-close" aria-label="Close">×</button>
+      </div>
+      <label for="req-email">Your email</label>
+      <input id="req-email" type="email" placeholder="you@company.com" autocomplete="email" required />
+      <label for="req-note">Add a note <span>(optional)</span></label>
+      <textarea id="req-note" rows="3" placeholder="Loved exploring your canvas! Let's talk about…"></textarea>
+      <p class="err" id="req-err" hidden>Please enter a valid email address.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn" id="req-cancel">Cancel</button>
+        <button type="submit" class="btn primary">Send request</button>
+      </div>
+    </form>
+    <div class="req-done" id="req-done" hidden>
+      <div class="check">✓</div>
+      <h2>Request sent</h2>
+      <p>Avinash will review your request to edit <b>portfolio.canvas</b>. You'll hear back at <b id="req-done-email"></b>.</p>
+      <button class="btn primary" id="req-ok">Back to viewing</button>
+    </div>
+  </div>
+</div>
 
 <script>
 (() => {
@@ -563,10 +640,11 @@
   const centerOf = () => { const s = safe(); return { cx: (s.w / 2 - cam.x) / cam.z, cy: (s.top + s.h / 2 - cam.y) / cam.z }; };
   const setCenter = (cx, cy, z) => { const s = safe(); cam.z = z; cam.x = s.w / 2 - cx * z; cam.y = s.top + s.h / 2 - cy * z; };
 
-  let flight = null, flightId = 0;
+  let flight = null, flightId = 0, flightResolve = null;
   const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
   const flyTo = (target, dur = 900, guideTo = null) => new Promise(resolve => {
     cancelAnimationFrame(flight);
+    flightResolve?.(); flightResolve = resolve;
     const id = ++flightId;
     const from = { ...centerOf(), z: cam.z };
     const gFrom = { ...guidePos };
@@ -590,13 +668,13 @@
     // background tabs pause animation frames; land anyway so the page never gets stuck mid-flight
     setTimeout(() => { if (id === flightId) { cancelAnimationFrame(flight); flightId++; land(); } }, dur + 300);
   });
-  const stopFlight = () => { cancelAnimationFrame(flight); flightId++; };
+  const stopFlight = () => { cancelAnimationFrame(flight); flightId++; flightResolve?.(); flightResolve = null; };
 
   const flyZone = name => {
     if (pageView) { document.querySelector(`[data-zone="${name}"]`).scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' }); return Promise.resolve(); }
     return flyTo(camFor(zoneRect(name)));
   };
-  $$('[data-fly]').forEach(b => b.addEventListener('click', () => flyZone(b.dataset.fly)));
+  $$('[data-fly]').forEach(b => b.addEventListener('click', () => { stopFollow(); flyZone(b.dataset.fly); }));
 
   // ---------- input: pan, pinch, drag ----------
   const pointers = new Map();
@@ -604,38 +682,21 @@
   const bringToFront = el => { maxZ++; el.style.zIndex = maxZ; };
   const posOf = el => ({ x: parseFloat(el.style.left), y: parseFloat(el.style.top) });
 
-  // ---------- undo / redo (moves of cards and notes) ----------
-  const undoStack = [], redoStack = [];
-  const nameOf = el => (el.querySelector('h3, .what')?.textContent || 'item').trim();
-  const syncHistoryButtons = () => { $('#undo').disabled = !undoStack.length; $('#redo').disabled = !redoStack.length; };
-  const placeAt = (el, p) => {
-    el.classList.add('history-move'); bringToFront(el);
-    el.style.left = p.x + 'px'; el.style.top = p.y + 'px';
-    setTimeout(() => el.classList.remove('history-move'), 400);
-    queueMinimap();
+  // ---------- view-only: visitors explore, only Avinash edits ----------
+  const snack = $('#snack');
+  const showSnack = () => {
+    const asked = store.get('requested');
+    $('#snack-text').textContent = asked ? '🔒 View only · your edit request is pending' : '🔒 You have view-only access to this canvas.';
+    $('#snack-req').hidden = !!asked;
+    snack.classList.add('on');
+    clearTimeout(showSnack.timer);
+    showSnack.timer = setTimeout(() => snack.classList.remove('on'), 4500);
   };
-  function recordMove(el, from) {
-    const to = posOf(el);
-    if (Math.hypot(to.x - from.x, to.y - from.y) < 2) return;
-    undoStack.push({ el, from, to }); redoStack.length = 0;
-    if (undoStack.length > 100) undoStack.shift();
-    syncHistoryButtons();
-  }
-  const undo = () => {
-    const m = undoStack.pop();
-    if (!m) { toast('Nothing to undo'); return; }
-    placeAt(m.el, m.from); redoStack.push(m); syncHistoryButtons();
-    toast(`Undo · moved ${nameOf(m.el)}`);
+  const refuseEdit = el => {
+    el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake');
+    setTimeout(() => el.classList.remove('shake'), 450);
+    showSnack();
   };
-  const redo = () => {
-    const m = redoStack.pop();
-    if (!m) { toast('Nothing to redo'); return; }
-    placeAt(m.el, m.to); undoStack.push(m); syncHistoryButtons();
-    toast(`Redo · moved ${nameOf(m.el)}`);
-  };
-  $('#undo').addEventListener('click', undo);
-  $('#redo').addEventListener('click', redo);
-  syncHistoryButtons();
 
   board.addEventListener('pointerdown', e => {
     if (pageView || e.button > 0) return;
@@ -647,15 +708,12 @@
     pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
     board.setPointerCapture(e.pointerId);
     if (pointers.size === 1) {
+      stopFollow();
       const item = e.target.closest('.drag');
-      if (item) {
-        item.classList.remove('ap-moving');
-        mode = { type: 'item', el: item, from: posOf(item) };
-        item.classList.add('lifted'); bringToFront(item);
-      }
+      // cards and notes are locked for viewers; trying to move one asks for edit access
+      if (item) mode = { type: 'locked', el: item, sx: e.clientX, sy: e.clientY, warned: false };
       else { mode = { type: 'pan' }; board.classList.add('grabbing'); }
     } else if (pointers.size === 2) {
-      mode?.el?.classList.remove('lifted');
       const [a, b] = [...pointers.values()];
       mode = { type: 'pinch', dist: Math.hypot(a.x - b.x, a.y - b.y), mid: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 } };
     }
@@ -666,11 +724,8 @@
     const dx = e.clientX - prev.x, dy = e.clientY - prev.y;
     pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (mode.type === 'pan') { cam.x += dx; cam.y += dy; apply(); }
-    else if (mode.type === 'item') {
-      const el = mode.el;
-      el.style.left = parseFloat(el.style.left) + dx / cam.z + 'px';
-      el.style.top = parseFloat(el.style.top) + dy / cam.z + 'px';
-      queueMinimap();
+    else if (mode.type === 'locked') {
+      if (!mode.warned && Math.hypot(e.clientX - mode.sx, e.clientY - mode.sy) > 6) { mode.warned = true; refuseEdit(mode.el); }
     } else if (mode.type === 'pinch' && pointers.size >= 2) {
       const [a, b] = [...pointers.values()];
       const dist = Math.hypot(a.x - b.x, a.y - b.y), mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
@@ -682,8 +737,7 @@
   const endPointer = e => {
     pointers.delete(e.pointerId);
     if (pointers.size === 0) {
-      if (mode?.type === 'item') recordMove(mode.el, mode.from);
-      mode?.el?.classList.remove('lifted'); mode = null; board.classList.remove('grabbing');
+      mode = null; board.classList.remove('grabbing');
     }
     else if (pointers.size === 1 && mode?.type === 'pinch') mode = { type: 'pan' };
   };
@@ -695,8 +749,8 @@
   addEventListener('wheel', e => {
     if (pageView) return;
     const zooming = e.ctrlKey || e.metaKey;
-    if (!zooming && e.target.closest?.('.toolbar')) return;
-    e.preventDefault(); stopFlight(); lastInput = performance.now();
+    if (!zooming && e.target.closest?.('.toolbar, .modal')) return;
+    e.preventDefault(); stopFlight(); stopFollow(); lastInput = performance.now();
     if (zooming) zoomAt(e.clientX, e.clientY, cam.z * Math.exp(-e.deltaY * 0.01));
     else { cam.x -= e.deltaX; cam.y -= e.deltaY; apply(); }
   }, { passive: false });
@@ -707,16 +761,17 @@
   addEventListener('gestureend', e => { if (!pageView) e.preventDefault(); }, { passive: false });
 
   const zoomCenter = f => zoomAt(innerWidth / 2, innerHeight / 2, cam.z * f);
-  $('#zoom-in').addEventListener('click', () => zoomCenter(1.25));
-  $('#zoom-out').addEventListener('click', () => zoomCenter(0.8));
-  $('#fit').addEventListener('click', () => flyTo(camFor(allRect(), 40)));
+  $('#zoom-in').addEventListener('click', () => { stopFollow(); zoomCenter(1.25); });
+  $('#zoom-out').addEventListener('click', () => { stopFollow(); zoomCenter(0.8); });
+  $('#fit').addEventListener('click', () => { stopFollow(); flyTo(camFor(allRect(), 40)); });
 
   addEventListener('keydown', e => {
-    if (pageView || e.target.closest?.('input, textarea')) return;
+    if (e.key === 'Escape' && !$('#req-modal').hidden) { closeRequest(); return; }
+    if (pageView || !$('#req-modal').hidden || e.target.closest?.('input, textarea')) return;
     const k = e.key, mod = e.ctrlKey || e.metaKey;
     lastInput = performance.now();
-    if (mod && k.toLowerCase() === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); return; }
-    if (mod && k.toLowerCase() === 'y') { e.preventDefault(); redo(); return; }
+    if (mod && ['z', 'y'].includes(k.toLowerCase())) { e.preventDefault(); showSnack(); return; }
+    if (k === '+' || k === '=' || k === '-' || k === '_' || k === '0' || k.startsWith('Arrow')) stopFollow();
     if (k === '+' || k === '=') zoomCenter(1.2);
     else if (k === '-' || k === '_') zoomCenter(1 / 1.2);
     else if (k === '0') flyTo(camFor(allRect(), 40));
@@ -808,7 +863,7 @@
   const steps = [
     { zone: 'work', at: [560, -430], text: 'From Feb 2025 to Sep 2026 I was at <b>Esko</b>, shipping backend services and an AI tool that builds workflows from plain English.' },
     { zone: 'projects', at: [-620, 350], text: 'Some things I\'ve built: <b>payments, RAG search, a workflow engine, an Android app</b> and more. Cards link to live demos and code.' },
-    { zone: 'wins', at: [-1480, -430], text: 'Seven hackathon finishes, including two 1st places and an SIH national finale. Feel free to <b>drag the notes around</b>.' },
+    { zone: 'wins', at: [-1480, -430], text: 'Seven hackathon finishes, including two 1st places and an SIH national finale.' },
     { zone: 'stack', at: [-420, -890], text: 'My toolbox: <b>React and Kotlin</b> up front, <b>Spring and Node</b> in the middle, <b>Postgres and Kafka</b> underneath, plus AI on top.' },
     { zone: 'contact', at: [640, 350], text: 'That\'s the tour! The canvas is yours now. Or say hi: I reply to every email.' },
   ];
@@ -827,6 +882,7 @@
   };
   const startTour = () => {
     if (pageView) return;
+    stopFollow();
     touring = true; guide.classList.remove('hidden'); $('#tour-btn').classList.add('on');
     doing(''); $('#chat').classList.remove('on'); $('#ap-select').classList.remove('on');
     store.set('toured', '1');
@@ -844,7 +900,7 @@
 
   // ---------- AP at work: the cursor keeps editing the board like a live collaborator ----------
   const sleep = ms => new Promise(r => setTimeout(r, ms));
-  const doing = label => { $('#guide-doing').textContent = label; };
+  const doing = label => { $('#guide-doing').textContent = label; $('#av-ap').classList.toggle('active', !!label); };
   const pick = arr => arr[Math.floor(Math.random() * arr.length)];
   const worldRectOf = el => {
     const r = el.getBoundingClientRect();
@@ -856,6 +912,13 @@
     return r.left > 30 && r.right < innerWidth - 30 && r.top > 80 && r.bottom < innerHeight - 100;
   };
   const canAct = () => ambientOn && !touring && !pageView && bubble.hidden && !mode;
+  // while followed, AP works anywhere on the board and the camera rides along
+  const seen = el => following || inView(el);
+  const goTo = async (el, gx, gy) => {
+    if (!following) return moveGuide(gx, gy);
+    const r = worldRectOf(el), fit = camFor(r, 90, narrow() ? 0.75 : 0.95);
+    await flyTo({ cx: r.x + r.w / 2, cy: r.y + r.h / 2, z: fit.z }, 1100, { x: gx, y: gy });
+  };
   const moveGuide = (wx, wy, dur = 900) => new Promise(res => {
     const from = { ...guidePos }, t0 = performance.now();
     let done = false;
@@ -887,9 +950,9 @@
   const actions = {
     async retype() {
       const el = $('.status');
-      if (!inView(el)) return false;
+      if (!seen(el)) return false;
       const r = worldRectOf(el);
-      await moveGuide(r.x + r.w - 4, r.y + r.h * 0.6);
+      await goTo(el, r.x + r.w - 4, r.y + r.h * 0.6);
       if (!canAct()) return true;
       doing('editing'); el.classList.add('typing');
       const t = $('#status-text');
@@ -901,10 +964,10 @@
       return true;
     },
     async nudge() {
-      const notesInView = $$('.sticky').filter(inView);
+      const notesInView = $$('.sticky').filter(seen);
       if (!notesInView.length) return false;
       const el = pick(notesInView), r = worldRectOf(el);
-      await moveGuide(r.x + r.w * 0.5, r.y + 26);
+      await goTo(el, r.x + r.w * 0.5, r.y + 26);
       if (!canAct()) return true;
       doing('moving'); bringToFront(el);
       el.classList.add('lifted', 'ap-moving');
@@ -920,10 +983,10 @@
       return true;
     },
     async select() {
-      const chips = $$('.stack .tags span, .hello-tags span, .chips span').filter(inView);
+      const chips = $$('.stack .tags span, .hello-tags span, .chips span').filter(seen);
       if (!chips.length) return false;
       const el = pick(chips), r = worldRectOf(el);
-      await moveGuide(r.x + r.w - 6, r.y + r.h - 4);
+      await goTo(el, r.x + r.w - 6, r.y + r.h - 4);
       if (!canAct()) return true;
       doing('selecting');
       const sel = $('#ap-select');
@@ -934,12 +997,12 @@
       return true;
     },
     async comment() {
-      const cards = $$('.project, .xp').filter(inView);
+      const cards = $$('.project, .xp').filter(seen);
       if (!cards.length) return false;
       const el = pick(cards), text = notes[el.querySelector('h3')?.textContent.trim()];
       if (!text) return false;
       const r = worldRectOf(el);
-      await moveGuide(r.x + r.w * 0.62, r.y + r.h * 0.3);
+      await goTo(el, r.x + r.w * 0.62, r.y + r.h * 0.3);
       if (!canAct()) return true;
       doing('commenting');
       const chat = $('#chat'); chat.textContent = text; chat.classList.add('on');
@@ -948,7 +1011,7 @@
       return true;
     },
     async circle() {
-      const targets = $$('.edu .big, .metric-row div, .sticky .place, .xp .when').filter(inView);
+      const targets = $$('.edu .big, .metric-row div, .sticky .place, .xp .when').filter(seen);
       if (!targets.length) return false;
       const el = pick(targets), r = worldRectOf(el);
       const cx = r.x + r.w / 2, cy = r.y + r.h / 2, rx = r.w / 2 + 16, ry = r.h / 2 + 12;
@@ -956,7 +1019,7 @@
         const a = -Math.PI * 0.9 + (i / 13) * Math.PI * 2, wob = 1 + (Math.random() - 0.5) * 0.08;
         return [cx + Math.cos(a) * rx * wob, cy + Math.sin(a) * ry * wob];
       });
-      await moveGuide(pts[0][0], pts[0][1]);
+      await goTo(el, pts[0][0], pts[0][1]);
       if (!canAct()) return true;
       doing('drawing');
       const ink = $('#ink'), path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -984,7 +1047,7 @@
     const order = ['retype', 'comment', 'nudge', 'select', 'circle'];
     let i = 0;
     while (ambientOn) {
-      await sleep(1800 + Math.random() * 2200);
+      await sleep(following ? 700 + Math.random() * 700 : 1800 + Math.random() * 2200);
       if (!canAct() || document.hidden) continue;
       guide.classList.remove('hidden');
       let acted = false;
@@ -1000,6 +1063,76 @@
     if (!ambientOn) { ambientOn = true; ambientLoop(); }
     return true;
   }
+
+  // ---------- follow Avinash (like clicking a collaborator's avatar in Figma) ----------
+  let following = false;
+  function startFollow() {
+    if (reduced) { toast('Avinash is idle right now'); return; }
+    if (pageView) setPageView(false);
+    if (touring) { touring = false; $('#tour-btn').classList.remove('on'); }
+    bubble.hidden = true;
+    following = true;
+    root.classList.add('following');
+    $('#av-ap').classList.add('following');
+    $('#follow-bar').hidden = false;
+    startAmbient();
+    flyTo({ cx: guidePos.x, cy: guidePos.y, z: Math.max(cam.z, narrow() ? 0.6 : 0.85) }, 800);
+  }
+  function stopFollow() {
+    if (!following) return;
+    following = false;
+    root.classList.remove('following');
+    $('#av-ap').classList.remove('following');
+    $('#follow-bar').hidden = true;
+  }
+  $('#av-ap').addEventListener('click', () => following ? stopFollow() : startFollow());
+  $('#follow-stop').addEventListener('click', stopFollow);
+
+  // ---------- request edit access (front-end only, like Figma's request dialog) ----------
+  const reqModal = $('#req-modal'), reqBtn = $('#request-btn');
+  const markRequested = () => {
+    reqBtn.textContent = '✓ Access requested';
+    reqBtn.classList.add('requested');
+  };
+  const openRequest = () => {
+    snack.classList.remove('on');
+    const asked = store.get('requested');
+    $('#req-form').hidden = !!asked;
+    $('#req-done').hidden = !asked;
+    if (asked) $('#req-done-email').textContent = asked;
+    reqModal.hidden = false;
+    if (!asked) setTimeout(() => $('#req-email').focus(), 50);
+  };
+  function closeRequest() { reqModal.hidden = true; }
+  reqBtn.addEventListener('click', openRequest);
+  $('#snack-req').addEventListener('click', openRequest);
+  $('#req-close').addEventListener('click', closeRequest);
+  $('#req-cancel').addEventListener('click', closeRequest);
+  $('#req-ok').addEventListener('click', closeRequest);
+  reqModal.addEventListener('click', e => { if (e.target === reqModal) closeRequest(); });
+  $('#req-form').addEventListener('submit', e => {
+    e.preventDefault();
+    const email = $('#req-email').value.trim();
+    const ok = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+    $('#req-err').hidden = ok;
+    if (!ok) { $('#req-email').focus(); return; }
+    store.set('requested', email);
+    $('#req-done-email').textContent = email;
+    $('#req-form').hidden = true;
+    $('#req-done').hidden = false;
+    markRequested();
+    // AP notices the request
+    const who = email.split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    setTimeout(() => {
+      if (pageView || touring) return;
+      guide.classList.remove('hidden');
+      const chat = $('#chat');
+      chat.textContent = `📬 New edit request from ${who}! I'll take a look.`;
+      chat.classList.add('on');
+      setTimeout(() => chat.classList.remove('on'), 4000);
+    }, 900);
+  });
+  if (store.get('requested')) markRequested();
 
   // ---------- page view ----------
   const narrow = () => innerWidth < 700;
