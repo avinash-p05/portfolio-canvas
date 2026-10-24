@@ -4,6 +4,7 @@ export const portfolio: Portfolio = {
   person: {
     name: 'Avinash Pauskar',
     initials: 'AP',
+    photo: '/my-pic.jpeg',
     role: 'Full-Stack Engineer',
     email: 'avinashpauskar05@gmail.com',
     resumeUrl: '/Avinash_Pauskar_Resume.pdf',
@@ -16,7 +17,7 @@ export const portfolio: Portfolio = {
   labels: {
     work: { x: 540, y: -470, title: 'Work', subtitle: "where I've shipped" },
     projects: { x: -640, y: 300, title: "Things I've built", subtitle: "open a card's links to dive in" },
-    wins: { x: -1500, y: -470, title: 'Hackathons', subtitle: '7 finishes, 2 wins' },
+    wins: { x: -1500, y: -470, title: 'Hackathons', subtitle: '7 finishes, 3 wins' },
     stack: { x: -440, y: -930, title: 'Toolbox', subtitle: 'what I reach for, front to back' },
     learning: { x: 1100, y: -130, title: 'Learning', subtitle: 'school & certs' },
     contact: { x: 620, y: 300, title: 'Say hi', subtitle: "the postcard is real, the stamp isn't" },
@@ -219,24 +220,24 @@ export const portfolio: Portfolio = {
       detail: 'National Finale',
     },
     {
-      id: 'wave',
+      id: 'aura',
       x: -1490,
       y: -160,
       r: 2,
+      color: 'purple',
+      place: '🥇 1st',
+      title: 'Aura-2025 Digital Entry System',
+      detail: 'KLS GIT',
+    },
+    {
+      id: 'wave',
+      x: -1260,
+      y: -150,
+      r: -2,
       color: 'blue',
       place: '🥈 2nd',
       title: 'Wave 2.0',
       detail: 'BEC Bagalkot',
-    },
-    {
-      id: 'aura',
-      x: -1260,
-      y: -150,
-      r: -2,
-      color: 'purple',
-      place: '🥈 2nd',
-      title: 'Aura-2025 Digital Entry System',
-      detail: 'KLS GIT',
     },
     {
       id: 'idea-bazaar',
@@ -378,7 +379,7 @@ export const portfolio: Portfolio = {
     {
       zone: 'wins',
       at: [-1480, -430],
-      text: 'Seven hackathon finishes, including two 1st places and an SIH national finale.',
+      text: 'Seven hackathon finishes, including three 1st places and an SIH national finale.',
     },
     {
       zone: 'stack',

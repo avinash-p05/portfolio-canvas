@@ -86,6 +86,10 @@ For the request dialog to work, turn on form detection for the site in Netlify (
 
 Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Credits
+
+Tech logos in the toolbox come from [Devicon](https://devicon.dev) (MIT).
+
 ## License
 
 [MIT](LICENSE) © Avinash Pauskar

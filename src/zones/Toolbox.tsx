@@ -1,6 +1,25 @@
 import { Item } from '../canvas/Item';
+import { techIcons } from '../content/techIcons';
 import type { SkillCard, ZoneLabel as ZoneLabelContent } from '../content/types';
 import { ZoneLabel } from './ZoneLabel';
+
+function Skill({ name }: { name: string }) {
+  const icon = techIcons[name];
+  return (
+    <span data-chip="">
+      {icon && (
+        <img
+          className={icon.mono ? 'tech-icon mono' : 'tech-icon'}
+          src={icon.src}
+          alt=""
+          height={16}
+          draggable={false}
+        />
+      )}
+      {name}
+    </span>
+  );
+}
 
 export function Toolbox({ label, cards }: { label: ZoneLabelContent; cards: SkillCard[] }) {
   return (
@@ -13,9 +32,7 @@ export function Toolbox({ label, cards }: { label: ZoneLabelContent; cards: Skil
               <h4>{title}</h4>
               <div className="tags">
                 {skills.map((skill) => (
-                  <span key={skill} data-chip="">
-                    {skill}
-                  </span>
+                  <Skill key={skill} name={skill} />
                 ))}
               </div>
             </div>

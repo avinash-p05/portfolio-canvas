@@ -23,8 +23,10 @@ export interface ZoneLabel extends Placement {
 
 export interface Person {
   name: string;
-  /** Initials shown on the avatar and the cursor stamp. */
+  /** Initials shown on the avatar, and on the postcard stamp when there's no photo. */
   initials: string;
+  /** Photo for the postcard stamp, served from public/. Falls back to the initials if missing. */
+  photo?: string;
   /** Short role shown in the page title. */
   role: string;
   email: string;

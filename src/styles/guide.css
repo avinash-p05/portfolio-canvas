@@ -93,7 +93,7 @@
 
 .guide .bubble .count {
   margin-left: auto;
-  font: 11px var(--mono);
+  font: 11px var(--label);
   color: var(--faint);
 }
 

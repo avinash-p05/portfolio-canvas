@@ -4,6 +4,7 @@ export const STORAGE_KEYS = {
   view: 'view',
   toured: 'toured',
   requested: 'requested',
+  lastRequestAt: 'lastRequestAt',
 } as const;
 
 type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];

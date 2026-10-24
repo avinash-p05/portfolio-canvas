@@ -38,6 +38,16 @@ export function Toolbar({
 }: ToolbarProps) {
   return (
     <nav className="chrome toolbar" aria-label="Canvas navigation">
+      {/* first, so it's reachable on phones without scrolling the toolbar */}
+      <button
+        type="button"
+        className="tb view-toggle"
+        title="Switch between canvas and page view"
+        onClick={onTogglePageView}
+      >
+        {pageView ? 'Canvas view' : 'Page view'}
+      </button>
+      <span className="sep" />
       {ZONES.map(({ id, label }) => (
         <button key={id} type="button" className="tb" onClick={() => onZone(id)}>
           {label}
@@ -72,14 +82,6 @@ export function Toolbar({
           ▶ Tour
         </button>
       )}
-      <button
-        type="button"
-        className="tb"
-        title="Switch between canvas and page view"
-        onClick={onTogglePageView}
-      >
-        {pageView ? 'Canvas view' : 'Page view'}
-      </button>
       <button type="button" className="tb" aria-label="Toggle dark mode" onClick={onToggleTheme}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
           <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />

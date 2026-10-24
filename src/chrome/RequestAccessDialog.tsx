@@ -1,10 +1,22 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import type { Person } from '../content/types';
+import {
+  MAX_EMAIL_LENGTH,
+  MAX_NOTE_LENGTH,
+  cooldownRemaining,
+  describeWait,
+  validateRequest,
+} from '../lib/requestLimits';
+import { STORAGE_KEYS, storage } from '../lib/storage';
 import { CursorLogo } from './Header';
 
 /** Must match the static form in index.html, which Netlify scans at deploy time. */
 const FORM_NAME = 'edit-request';
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+const lastSentAt = () => {
+  const saved = storage.get(STORAGE_KEYS.lastRequestAt);
+  return saved === null ? null : Number(saved);
+};
 
 interface RequestAccessDialogProps {
   open: boolean;
@@ -48,20 +60,36 @@ export function RequestAccessDialog({
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     const address = email.trim();
-    if (!EMAIL_PATTERN.test(address)) {
-      setStatus({ kind: 'error', message: 'Please enter a valid email address.' });
+    const message = note.trim();
+    const problem = validateRequest(address, message);
+    if (problem) {
+      setStatus({ kind: 'error', message: problem });
       emailRef.current?.focus();
+      return;
+    }
+    const wait = cooldownRemaining(lastSentAt(), Date.now());
+    if (wait > 0) {
+      setStatus({
+        kind: 'error',
+        message: `You sent a request a moment ago. Try again in ${describeWait(wait)}.`,
+      });
       return;
     }
     setStatus({ kind: 'sending' });
     try {
-      const body = new URLSearchParams({ 'form-name': FORM_NAME, email: address, note, company: honeypot });
+      const body = new URLSearchParams({
+        'form-name': FORM_NAME,
+        email: address,
+        note: message,
+        company: honeypot,
+      });
       const res = await fetch('/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: body.toString(),
       });
       if (!res.ok) throw new Error(`Request failed with ${res.status}`);
+      storage.set(STORAGE_KEYS.lastRequestAt, String(Date.now()));
       setStatus({ kind: 'idle' });
       onRequested(address);
     } catch {
@@ -120,6 +148,7 @@ export function RequestAccessDialog({
               type="email"
               placeholder="you@company.com"
               autoComplete="email"
+              maxLength={MAX_EMAIL_LENGTH}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -130,9 +159,13 @@ export function RequestAccessDialog({
               id="request-note"
               rows={3}
               placeholder="Loved exploring your canvas! Let's talk about…"
+              maxLength={MAX_NOTE_LENGTH}
               value={note}
               onChange={(e) => setNote(e.target.value)}
             />
+            <p className="counter" aria-live="polite">
+              {note.length}/{MAX_NOTE_LENGTH}
+            </p>
             {status.kind === 'error' && <p className="err">{status.message}</p>}
             <div className="modal-actions">
               <button type="button" className="btn" onClick={onClose}>

@@ -91,7 +91,7 @@
 
 .zone-label small {
   display: block;
-  font: 500 13px var(--mono);
+  font: 500 13px var(--label);
   color: var(--faint);
   margin-top: 6px;
   letter-spacing: 0.02em;

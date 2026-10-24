@@ -28,7 +28,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font: 12.5px var(--mono);
+  font: 12.5px var(--label);
   color: var(--muted);
   padding: 5px 11px;
   border-radius: 99px;
@@ -98,7 +98,7 @@
 }
 
 .xp .when {
-  font: 12.5px var(--mono);
+  font: 12.5px var(--label);
   color: var(--faint);
   white-space: nowrap;
 }
@@ -191,7 +191,7 @@
   position: absolute;
   left: 14px;
   bottom: 10px;
-  font: 11.5px var(--mono);
+  font: 11.5px var(--label);
   padding: 3px 8px;
   border-radius: 6px;
   background: var(--card);
@@ -226,7 +226,7 @@
 }
 
 .chips span {
-  font: 11.5px var(--mono);
+  font: 11.5px var(--label);
   padding: 3px 8px;
   border-radius: 6px;
   background: var(--paper);
@@ -238,7 +238,7 @@
   display: flex;
   gap: 14px;
   margin-top: 14px;
-  font: 500 13px var(--mono);
+  font: 500 13px var(--label);
 }
 
 .links a {
@@ -274,7 +274,7 @@
 }
 
 .sticky .where {
-  font: 11px var(--mono);
+  font: 11px var(--label);
   opacity: 0.6;
   margin-top: 10px;
 }
@@ -315,7 +315,7 @@
 /* ---------- toolbox ---------- */
 
 .stack h4 {
-  font: 500 12px var(--mono);
+  font: 500 12px var(--label);
   color: var(--faint);
   text-transform: uppercase;
   letter-spacing: 0.07em;
@@ -333,11 +333,25 @@
 }
 
 .stack .tags span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   font-size: 14px;
   padding: 6px 11px;
   border-radius: 9px;
   border: 1px solid var(--line);
   background: var(--paper);
+}
+
+.tech-icon {
+  height: 16px;
+  width: auto;
+  flex: none;
+}
+
+/* black logos (Express, Kafka, AWS) would vanish on the dark theme */
+:root[data-theme='dark'] .tech-icon.mono {
+  filter: invert(1) brightness(1.6);
 }
 
 /* ---------- learning ---------- */
@@ -361,7 +375,7 @@
 }
 
 .card h5 {
-  font: 500 12px var(--mono);
+  font: 500 12px var(--label);
   color: var(--faint);
   text-transform: uppercase;
   letter-spacing: 0.07em;
@@ -383,7 +397,7 @@
 
 .certs li span {
   color: var(--faint);
-  font: 12px var(--mono);
+  font: 12px var(--label);
   white-space: nowrap;
 }
 
@@ -446,11 +460,26 @@
   background: var(--accent-soft);
 }
 
+/* with a photo, the stamp gets a white border like a real postage stamp */
+.stamp.photo {
+  padding: 4px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.stamp.photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 2px;
+  display: block;
+}
+
 .addr a,
 .addr button {
   display: block;
   text-align: left;
-  font: 14px var(--mono);
+  font: 14px var(--label);
   padding-bottom: 6px;
   border: 0;
   border-bottom: 1px solid var(--line);
