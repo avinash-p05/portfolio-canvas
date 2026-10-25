@@ -26,8 +26,19 @@ Everything on the canvas comes from one typed file: [`src/content/portfolio.ts`]
 1. Fork the repo and run it locally (see below).
 2. Edit `src/content/portfolio.ts`. Positions are world coordinates in pixels, with the intro card near `(0, 0)`.
 3. Replace `public/Avinash_Pauskar_Resume.pdf` with your résumé and update `person.resumeUrl`.
-4. Update the title and description in `index.html`.
-5. Deploy to Netlify (see below).
+4. Update the title, description and link-preview tags in `index.html`, including the absolute URLs.
+5. Edit `scripts/og-image.html` and regenerate the 1200×627 link-preview image (see below).
+6. Deploy to Netlify (see below).
+
+### Regenerating the link-preview image
+
+`public/og-image.png` is what LinkedIn, X and Slack show when the site is shared. Its source is `scripts/og-image.html`. After editing that file, render it with headless Chrome (adjust the Chrome path for your OS):
+
+```bash
+chrome --headless=new --hide-scrollbars --force-device-scale-factor=1 --window-size=1200,627 --virtual-time-budget=8000 --screenshot=public/og-image.png "file://$PWD/scripts/og-image.html"
+```
+
+LinkedIn caches previews, so after deploying, paste the URL into [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/) to refresh it.
 
 ## Getting started
 
